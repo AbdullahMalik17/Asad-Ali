@@ -75,13 +75,15 @@ export default function PricingCalculator() {
             
             {/* Currency Selector */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+              <label htmlFor="currency-select" className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                 Select Your Currency / Region
               </label>
               <select
+                id="currency-select"
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-800 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition-all cursor-pointer"
+                aria-label="Select Your Currency or Region"
+                className="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-800 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
               >
                 {Object.values(CURRENCIES).map((c) => (
                   <option key={c.code} value={c.code}>
@@ -93,14 +95,15 @@ export default function PricingCalculator() {
 
             {/* Duration Selector */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+              <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                 Select Class Duration
-              </label>
-              <div className="grid grid-cols-2 gap-3">
+              </span>
+              <div className="grid grid-cols-2 gap-3" role="group" aria-label="Select Class Duration">
                 <button
                   type="button"
+                  aria-pressed={durationMinutes === 30}
                   onClick={() => setDurationMinutes(30)}
-                  className={`py-3 px-4 rounded-2xl text-xs sm:text-sm font-bold border transition-all ${
+                  className={`py-3 px-4 rounded-2xl text-xs sm:text-sm font-bold border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 ${
                     durationMinutes === 30
                       ? "border-emerald-600 bg-emerald-50 text-emerald-950 shadow-sm"
                       : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300"
@@ -111,8 +114,9 @@ export default function PricingCalculator() {
                 
                 <button
                   type="button"
+                  aria-pressed={durationMinutes === 45}
                   onClick={() => setDurationMinutes(45)}
-                  className={`py-3 px-4 rounded-2xl text-xs sm:text-sm font-bold border transition-all ${
+                  className={`py-3 px-4 rounded-2xl text-xs sm:text-sm font-bold border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 ${
                     durationMinutes === 45
                       ? "border-emerald-600 bg-emerald-50 text-emerald-950 shadow-sm"
                       : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300"
@@ -127,16 +131,17 @@ export default function PricingCalculator() {
 
           {/* Days Per Week Selector */}
           <div className="py-8 border-b border-slate-200">
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+            <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
               Classes Per Week
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            </span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3" role="group" aria-label="Select classes per week">
               {FREQUENCIES.map((freq) => (
                 <button
                   key={freq.days}
                   type="button"
+                  aria-pressed={daysPerWeek === freq.days}
                   onClick={() => setDaysPerWeek(freq.days)}
-                  className={`relative py-4 px-3 rounded-2xl border text-center transition-all ${
+                  className={`relative py-4 px-3 rounded-2xl border text-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 ${
                     daysPerWeek === freq.days
                       ? "border-emerald-600 bg-emerald-800 text-white shadow-lg ring-2 ring-emerald-600/30"
                       : "border-slate-200 bg-slate-50 text-slate-700 hover:border-emerald-400 hover:bg-emerald-50/50"
@@ -160,7 +165,7 @@ export default function PricingCalculator() {
           <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" aria-hidden="true" />
                 Special 15% Family Discount for 2nd Sibling
               </span>
               
@@ -172,7 +177,7 @@ export default function PricingCalculator() {
               </div>
               
               <p className="mt-1 text-xs text-slate-500 font-medium flex items-center gap-1">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 inline" />
+                <ShieldCheck className="w-4 h-4 text-emerald-600 inline" aria-hidden="true" />
                 Includes 1-on-1 Tutor + Flexible Rescheduling + 3-Day Free Trial
               </p>
             </div>
@@ -180,19 +185,21 @@ export default function PricingCalculator() {
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
               <button
                 type="button"
+                aria-label="Pay tuition online"
                 onClick={() => setIsPaymentModalOpen(true)}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl bg-emerald-700 hover:bg-emerald-600 px-6 py-4 text-base font-extrabold text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 shrink-0 cursor-pointer"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl bg-emerald-700 hover:bg-emerald-600 px-6 py-4 text-base font-extrabold text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
               >
-                <CreditCard className="w-5 h-5 text-amber-300" />
+                <CreditCard className="w-5 h-5 text-amber-300" aria-hidden="true" />
                 <span>Pay Tuition Online</span>
               </button>
 
               <a
                 href="#admissions"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 px-6 py-4 text-base font-extrabold text-emerald-950 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 shrink-0"
+                aria-label="Book 3-Day Free Trial Class"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 px-6 py-4 text-base font-extrabold text-emerald-950 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2"
               >
                 <span>Book 3-Day Free Trial</span>
-                <ArrowRight size={18} />
+                <ArrowRight size={18} aria-hidden="true" />
               </a>
             </div>
           </div>

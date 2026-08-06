@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import {
   Play,
   Pause,
@@ -148,34 +148,37 @@ export default function ZoomRecordingsPlayer() {
   };
 
   const toggleFullscreen = () => {
-    if (videoRef.current) {
-      if (videoRef.current.requestFullscreen) {
-        videoRef.current.requestFullscreen();
-      }
+    if (videoRef.current?.requestFullscreen) {
+      videoRef.current.requestFullscreen();
     }
   };
 
-  const filteredRecordings = SAMPLE_RECORDINGS.filter((rec) => {
-    const matchesCategory = selectedCategory === "all" || rec.category === selectedCategory;
-    const matchesSearch =
-      rec.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      rec.teacherName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      rec.courseName.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredRecordings = React.useMemo(() => {
+    return SAMPLE_RECORDINGS.filter((rec) => {
+      const matchesCategory = selectedCategory === "all" || rec.category === selectedCategory;
+      const matchesSearch =
+        rec.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        rec.teacherName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        rec.courseName.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [selectedCategory, searchQuery]);
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-white max-w-7xl mx-auto">
+      {/* Header Bar */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1.5">
-            <Video size={14} /> Zoom Recording Vault
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <Video size={12} aria-hidden="true" /> Zoom Recording Vault
+            </span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+
+          <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
             Class Recordings & Teacher Corrections
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-400 mt-0.5">
             Rewatch live 1-on-1 sessions, jump to teacher feedback timestamps, and download study notes.
           </p>
         </div>
@@ -199,33 +202,26 @@ export default function ZoomRecordingsPlayer() {
               className="w-full aspect-video object-cover bg-black"
             />
 
-            {/* Custom Overlay Player Controls */}
-            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex items-center justify-between gap-3 text-white">
+            {/* Controls Bar */}
+            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent p-4 flex items-center justify-between gap-4 transition-opacity duration-300">
               <div className="flex items-center gap-3">
                 <button
+                  type="button"
                   onClick={togglePlay}
-                  className="p-2.5 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold transition shadow-lg"
+                  className="p-2 rounded-xl bg-amber-400 text-slate-950 font-bold hover:bg-amber-300 transition shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2"
+                  aria-label={isPlaying ? "Pause Video" : "Play Video"}
                 >
-                  {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-0.5" />}
+                  {isPlaying ? <Pause size={18} aria-hidden="true" /> : <Play size={18} className="ml-0.5" aria-hidden="true" />}
                 </button>
 
-                <button onClick={toggleMute} className="p-2 text-slate-300 hover:text-white transition">
-                  {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-                </button>
-
-                <div className="text-xs text-slate-300 font-medium">
-                  <span className="text-white font-bold">{selectedRecording.title.split(":")[0]}</span>
-                </div>
-              </div>
-
-              {/* Speed & Fullscreen */}
-              <div className="flex items-center gap-2 text-xs">
-                <div className="flex items-center bg-slate-900/80 rounded-lg p-1 border border-slate-700">
+                <div className="flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
                   {[1, 1.25, 1.5, 2].map((spd) => (
                     <button
                       key={spd}
+                      type="button"
                       onClick={() => changeSpeed(spd)}
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold transition ${
+                      aria-label={`Set speed to ${spd}x`}
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
                         playbackSpeed === spd
                           ? "bg-amber-400 text-slate-950"
                           : "text-slate-400 hover:text-white"
@@ -236,8 +232,13 @@ export default function ZoomRecordingsPlayer() {
                   ))}
                 </div>
 
-                <button onClick={toggleFullscreen} className="p-2 text-slate-300 hover:text-white transition">
-                  <Maximize size={18} />
+                <button
+                  type="button"
+                  onClick={toggleFullscreen}
+                  aria-label="Toggle Fullscreen"
+                  className="p-2 text-slate-300 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-xl"
+                >
+                  <Maximize size={18} aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -348,7 +349,7 @@ export default function ZoomRecordingsPlayer() {
                 No recordings found matching your search.
               </div>
             ) : (
-              filteredRecordings.map((rec) => {
+              filteredRecordings.map((rec: RecordingSession) => {
                 const isSelected = selectedRecording.id === rec.id;
                 return (
                   <div

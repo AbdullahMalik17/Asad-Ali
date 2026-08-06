@@ -233,61 +233,24 @@ export default function StudentProgressChart() {
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Tajweed Score (%)
                 </span>
                 <span className="flex items-center gap-1.5 text-amber-400 font-medium">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400" /> Fluency Score (%)
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Fluency (%)
                 </span>
               </div>
             </div>
-
-            <div className="h-[280px] w-full pt-2">
+            <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={displayData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorTajweed" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
-                    </linearGradient>
-                    <linearGradient id="colorFluency" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.0} />
-                    </linearGradient>
-                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.5} />
-                  <XAxis dataKey="week" stroke="#94a3b8" fontSize={12} tickLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={12} domain={[50, 100]} tickLine={false} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#0f172a",
-                      borderColor: "#334155",
-                      borderRadius: "0.75rem",
-                      color: "#fff",
-                      fontSize: "12px",
-                      boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)",
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="tajweedScore"
-                    name="Tajweed Accuracy (%)"
-                    stroke="#10b981"
-                    strokeWidth={3}
-                    fillOpacity={1}
-                    fill="url(#colorTajweed)"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="fluency"
-                    name="Recitation Fluency (%)"
-                    stroke="#f59e0b"
-                    strokeWidth={2}
-                    fillOpacity={1}
-                    fill="url(#colorFluency)"
-                  />
+                  <XAxis dataKey="week" stroke="#94a3b8" fontSize={12} />
+                  <YAxis stroke="#94a3b8" fontSize={12} domain={[50, 100]} />
+                  <Tooltip contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155", borderRadius: "0.75rem", color: "#fff" }} />
+                  <Area type="monotone" dataKey="tajweedScore" stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
+                  <Area type="monotone" dataKey="fluency" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.2} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
         )}
-
         {activeChartTab === "skills" && (
           <div className="space-y-3">
             <div className="flex items-center justify-between text-xs text-slate-400 px-1">

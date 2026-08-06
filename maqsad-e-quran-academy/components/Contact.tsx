@@ -6,26 +6,28 @@ import {
   MessageCircle,
   Phone,
 } from "lucide-react";
+import { useLanguage } from "./LanguageProvider";
 
 export default function Contact() {
+  const { t } = useLanguage();
+
   return (
     <section id="contact" className="bg-[#fbf8f0] py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mx-auto max-w-3xl text-center">
           <p className="font-extrabold uppercase tracking-[0.25em] text-amber-600 text-xs sm:text-sm">
-            Contact & Admissions
+            {t("contact.subtitle")}
           </p>
 
           <h2 className="mt-2 text-3xl font-black text-emerald-950 sm:text-4xl lg:text-5xl">
-            Start Your Quran{" "}
+            {t("contact.title")}{" "}
             <span className="block text-amber-600">
-              Learning Journey Today
+              {t("contact.highlight")}
             </span>
           </h2>
 
           <p className="mt-4 text-base leading-relaxed text-gray-600 sm:text-lg">
-            Submit your details for a free trial class. Our admission team will
-            contact you through WhatsApp.
+            {t("contact.description")}
           </p>
         </div>
 
@@ -49,10 +51,11 @@ export default function Contact() {
               <div className="mt-6 space-y-4 text-sm">
                 <a
                   href="tel:+923301676985"
-                  className="flex items-center gap-3.5 hover:text-amber-300 transition-colors"
+                  aria-label="Call Maqsad-e-Quran Academy at +92 330 1676985"
+                  className="flex items-center gap-3.5 hover:text-amber-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 rounded-xl"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400 text-emerald-950">
-                    <Phone size={20} />
+                    <Phone size={20} aria-hidden="true" />
                   </span>
 
                   <div>
@@ -63,10 +66,11 @@ export default function Contact() {
 
                 <a
                   href="mailto:maqsadquran@gmail.com"
-                  className="flex items-center gap-3.5 hover:text-amber-300 transition-colors"
+                  aria-label="Email Maqsad-e-Quran Academy at maqsadquran@gmail.com"
+                  className="flex items-center gap-3.5 hover:text-amber-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 rounded-xl"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400 text-emerald-950">
-                    <Mail size={20} />
+                    <Mail size={20} aria-hidden="true" />
                   </span>
 
                   <div>
@@ -78,11 +82,12 @@ export default function Contact() {
                 <a
                   href="https://wa.me/923301676985"
                   target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-3.5 hover:text-amber-300 transition-colors"
+                  rel="noreferrer noopener"
+                  aria-label="Chat with Maqsad-e-Quran Admission Team on WhatsApp"
+                  className="flex items-center gap-3.5 hover:text-amber-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 rounded-xl"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400 text-emerald-950">
-                    <MessageCircle size={20} />
+                    <MessageCircle size={20} aria-hidden="true" />
                   </span>
 
                   <div>
@@ -93,7 +98,7 @@ export default function Contact() {
 
                 <div className="flex items-center gap-3.5">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400 text-emerald-950">
-                    <Clock3 size={20} />
+                    <Clock3 size={20} aria-hidden="true" />
                   </span>
 
                   <div>
@@ -104,7 +109,7 @@ export default function Contact() {
 
                 <div className="flex items-center gap-3.5">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400 text-emerald-950">
-                    <MapPin size={20} />
+                    <MapPin size={20} aria-hidden="true" />
                   </span>
 
                   <div>

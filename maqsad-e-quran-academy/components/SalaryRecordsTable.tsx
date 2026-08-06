@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   DollarSign,
   Download,
@@ -154,7 +154,7 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
 
   const totalHoursTaught = records.reduce((sum, r) => sum + r.hoursTaught, 0);
 
-  const handleCreateRecord = (e: React.FormEvent) => {
+  const handleCreateRecord = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     const baseSalary = newHours * newRate;
     const netPayout = baseSalary + newBonus - newDeductions;
@@ -175,11 +175,11 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
       payoutDate: newStatus === "paid" ? new Date().toISOString().split("T")[0] : undefined,
     };
 
-    setRecords([newRec, ...records]);
+    setRecords((prev) => [newRec, ...prev]);
     setShowAddModal(false);
-  };
+  }, [newHours, newRate, newBonus, newDeductions, newTeacherName, newPayPeriod, newMethod, newStatus]);
 
-  const handleDownloadPayslip = (record: SalaryRecord) => {
+  const handleDownloadPayslip = useCallback((record: SalaryRecord) => {
     try {
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const width = 210;
@@ -305,7 +305,7 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
       console.error("Payslip PDF Error:", err);
       alert("Failed to generate Payslip PDF.");
     }
-  };
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -313,7 +313,7 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl shadow-xl flex items-center gap-4">
           <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-            <DollarSign size={24} />
+            <DollarSign size={24} aria-hidden="true" />
           </div>
           <div>
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Salary Disbursed</p>
@@ -324,7 +324,7 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
 
         <div className="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl shadow-xl flex items-center gap-4">
           <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-            <Clock size={24} />
+            <Clock size={24} aria-hidden="true" />
           </div>
           <div>
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pending Payouts</p>
@@ -335,7 +335,7 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
 
         <div className="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl shadow-xl flex items-center gap-4">
           <div className="p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400">
-            <TrendingUp size={24} />
+            <TrendingUp size={24} aria-hidden="true" />
           </div>
           <div>
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Teaching Hours</p>
@@ -349,20 +349,22 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
       <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
         <div className="flex flex-1 items-center gap-3 w-full">
           <div className="relative flex-1">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true" />
             <input
               type="text"
               placeholder="Search teacher, period, or ref ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              aria-label="Search teacher salary records"
+              className="w-full bg-slate-950 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
             />
           </div>
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            aria-label="Filter salary records by status"
+            className="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
           >
             <option value="all">All Statuses</option>
             <option value="paid">Paid</option>
@@ -373,10 +375,12 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
 
         {role === "admin" && (
           <button
+            type="button"
             onClick={() => setShowAddModal(true)}
-            className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg transition active:scale-95 cursor-pointer"
+            aria-label="Record salary payout"
+            className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg transition active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
           >
-            <Plus size={16} />
+            <Plus size={16} aria-hidden="true" />
             <span>Record Salary Payout</span>
           </button>
         )}
@@ -386,7 +390,7 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
       <div className="bg-slate-900/90 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
         <div className="p-5 border-b border-slate-800 flex items-center justify-between">
           <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <FileSpreadsheet size={18} className="text-amber-400" />
+            <FileSpreadsheet size={18} className="text-amber-400" aria-hidden="true" />
             Teacher Salary & Payroll Disbursements
           </h3>
           <span className="text-xs text-slate-400">Showing {displayedRecords.length} records</span>
@@ -452,27 +456,29 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
                   <td className="px-6 py-4">
                     {r.status === "paid" && (
                       <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-bold inline-flex items-center gap-1">
-                        <CheckCircle2 size={12} /> Paid
+                        <CheckCircle2 size={12} aria-hidden="true" /> Paid
                       </span>
                     )}
                     {r.status === "pending" && (
                       <span className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-bold inline-flex items-center gap-1">
-                        <Clock size={12} /> Pending
+                        <Clock size={12} aria-hidden="true" /> Pending
                       </span>
                     )}
                     {r.status === "processing" && (
                       <span className="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/30 text-xs font-bold inline-flex items-center gap-1">
-                        <Clock size={12} /> Processing
+                        <Clock size={12} aria-hidden="true" /> Processing
                       </span>
                     )}
                   </td>
 
                   <td className="px-6 py-4 text-right">
                     <button
+                      type="button"
+                      aria-label={`Download payslip PDF for ${r.teacherName}`}
                       onClick={() => handleDownloadPayslip(r)}
-                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition inline-flex items-center gap-1 cursor-pointer"
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition inline-flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                     >
-                      <Download size={14} className="text-amber-400" /> Payslip PDF
+                      <Download size={14} className="text-amber-400" aria-hidden="true" /> Payslip PDF
                     </button>
                   </td>
                 </tr>
@@ -485,14 +491,21 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
       {/* MODAL: ADD PAYOUT RECORD */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-salary-modal-title"
+            className="bg-slate-900 border border-slate-700 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4"
+          >
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-lg font-bold text-white">Record Teacher Salary Disbursement</h3>
+              <h3 id="add-salary-modal-title" className="text-lg font-bold text-white">Record Teacher Salary Disbursement</h3>
               <button
+                type="button"
+                aria-label="Close modal"
                 onClick={() => setShowAddModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className="p-1 rounded-lg text-slate-400 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               >
-                <X size={18} />
+                <X size={18} aria-hidden="true" />
               </button>
             </div>
 
@@ -502,7 +515,7 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
                 <select
                   value={newTeacherName}
                   onChange={(e) => setNewTeacherName(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                 >
                   <option value="Ustadha Fatima Al-Zahra">Ustadha Fatima Al-Zahra</option>
                   <option value="Dr. Ustadh Ahmad Al-Mansoor">Dr. Ustadh Ahmad Al-Mansoor</option>
@@ -517,7 +530,7 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
                     type="text"
                     value={newPayPeriod}
                     onChange={(e) => setNewPayPeriod(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                   />
                 </div>
 
@@ -525,8 +538,8 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Payment Method</label>
                   <select
                     value={newMethod}
-                    onChange={(e) => setNewMethod(e.target.value as any)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    onChange={(e) => setNewMethod(e.target.value as SalaryRecord["paymentMethod"])}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                   >
                     <option value="Bank Transfer">Bank Transfer</option>
                     <option value="PayPal">PayPal</option>
@@ -543,7 +556,7 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
                     type="number"
                     value={newHours}
                     onChange={(e) => setNewHours(parseInt(e.target.value) || 0)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                   />
                 </div>
 
@@ -553,7 +566,7 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
                     type="number"
                     value={newRate}
                     onChange={(e) => setNewRate(parseInt(e.target.value) || 0)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                   />
                 </div>
               </div>
@@ -565,7 +578,7 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
                     type="number"
                     value={newBonus}
                     onChange={(e) => setNewBonus(parseInt(e.target.value) || 0)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                   />
                 </div>
 
@@ -573,8 +586,8 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Status</label>
                   <select
                     value={newStatus}
-                    onChange={(e) => setNewStatus(e.target.value as any)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    onChange={(e) => setNewStatus(e.target.value as SalaryRecord["status"])}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                   >
                     <option value="paid">Paid</option>
                     <option value="pending">Pending</option>
@@ -587,13 +600,13 @@ export default function SalaryRecordsTable({ role = "admin", teacherFilterName }
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold"
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400"
+                  className="px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                 >
                   Save Payout Record
                 </button>

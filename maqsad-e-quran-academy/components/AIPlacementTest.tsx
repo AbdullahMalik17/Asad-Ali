@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Sparkles,
   X,
@@ -85,38 +85,48 @@ export default function AIPlacementTest({ isOpen, onClose, onSelectCourse }: AIP
   const [isRecordingAudio, setIsRecordingAudio] = useState<boolean>(false);
   const [audioRecorded, setAudioRecorded] = useState<boolean>(false);
 
-  if (!isOpen) return null;
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
-  const currentQuestion = PLACEMENT_QUESTIONS[currentStep];
-
-  const handleSelectOption = (questionId: number, val: string) => {
+  const handleSelectOption = React.useCallback((questionId: number, val: string) => {
     setSelectedAnswers((prev) => ({ ...prev, [questionId]: val }));
-  };
+  }, []);
 
-  const handleNext = () => {
-    if (currentStep < PLACEMENT_QUESTIONS.length - 1) {
-      setCurrentStep((prev) => prev + 1);
-    } else {
-      // Audio step / Analysis trigger
-      startAIAnalysis();
-    }
-  };
-
-  const startAIAnalysis = () => {
+  const startAIAnalysis = React.useCallback(() => {
     setIsAnalyzing(true);
     setTimeout(() => {
       setIsAnalyzing(false);
       setIsFinished(true);
     }, 2500);
-  };
+  }, []);
 
-  const resetTest = () => {
+  const handleNext = React.useCallback(() => {
+    if (currentStep < PLACEMENT_QUESTIONS.length - 1) {
+      setCurrentStep((prev) => prev + 1);
+    } else {
+      startAIAnalysis();
+    }
+  }, [currentStep, startAIAnalysis]);
+
+  const resetTest = React.useCallback(() => {
     setCurrentStep(0);
     setSelectedAnswers({});
     setIsAnalyzing(false);
     setIsFinished(false);
     setAudioRecorded(false);
-  };
+  }, []);
+
+  if (!isOpen) return null;
+
+  const currentQuestion = PLACEMENT_QUESTIONS[currentStep];
 
   // Calculate Placement Result
   const calculateResult = () => {
@@ -156,29 +166,37 @@ export default function AIPlacementTest({ isOpen, onClose, onSelectCourse }: AIP
   };
 
   const result = calculateResult();
+  const progressPercent = Math.round(((currentStep + 1) / PLACEMENT_QUESTIONS.length) * 100);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-      <div className="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ai-placement-title"
+        className="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]"
+      >
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-900 p-5 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <Sparkles size={20} />
+              <Sparkles size={20} aria-hidden="true" />
             </div>
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
                 Gemini Quran AI Diagnostic Engine
               </span>
-              <h2 className="text-lg font-extrabold text-white mt-0.5">AI Tajweed Placement Test</h2>
+              <h2 id="ai-placement-title" className="text-lg font-extrabold text-white mt-0.5">AI Tajweed Placement Test</h2>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            aria-label="Close Placement Test Modal"
+            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
           >
-            <X size={20} />
+            <X size={20} aria-hidden="true" />
           </button>
         </div>
 
@@ -186,10 +204,10 @@ export default function AIPlacementTest({ isOpen, onClose, onSelectCourse }: AIP
         <div className="p-6 overflow-y-auto space-y-6 flex-1">
           {/* State 1: AI Analyzing loader */}
           {isAnalyzing && (
-            <div className="py-16 flex flex-col items-center justify-center text-center space-y-4">
+            <div role="status" aria-live="polite" className="py-16 flex flex-col items-center justify-center text-center space-y-4">
               <div className="relative">
                 <div className="w-20 h-20 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin" />
-                <Sparkles className="w-8 h-8 text-amber-400 absolute inset-0 m-auto animate-pulse" />
+                <Sparkles className="w-8 h-8 text-amber-400 absolute inset-0 m-auto animate-pulse" aria-hidden="true" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white">Analyzing Recitation & Tajweed Knowledge...</h3>
@@ -205,7 +223,7 @@ export default function AIPlacementTest({ isOpen, onClose, onSelectCourse }: AIP
             <div className="space-y-6 animate-fadeIn">
               <div className="bg-gradient-to-br from-emerald-950/80 to-slate-900 border border-emerald-500/30 rounded-2xl p-6 text-center space-y-4">
                 <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 mx-auto flex items-center justify-center">
-                  <Award size={32} />
+                  <Award size={32} aria-hidden="true" />
                 </div>
                 <div>
                   <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
@@ -230,22 +248,24 @@ export default function AIPlacementTest({ isOpen, onClose, onSelectCourse }: AIP
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row items-center gap-3 justify-end pt-2">
                 <button
+                  type="button"
                   onClick={resetTest}
-                  className="w-full sm:w-auto px-5 py-3 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-5 py-3 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                 >
-                  <RotateCcw size={16} />
+                  <RotateCcw size={16} aria-hidden="true" />
                   <span>Retake Test</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => {
                     if (onSelectCourse) onSelectCourse(result.recommendedCourse);
                     onClose();
                   }}
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-extrabold text-xs shadow-lg shadow-emerald-700/30 transition flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-extrabold text-xs shadow-lg shadow-emerald-700/30 transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                 >
                   <span>Select Recommended Course</span>
-                  <ArrowRight size={16} />
+                  <ArrowRight size={16} aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -258,12 +278,19 @@ export default function AIPlacementTest({ isOpen, onClose, onSelectCourse }: AIP
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs text-slate-400 font-bold">
                   <span>Question {currentStep + 1} of {PLACEMENT_QUESTIONS.length}</span>
-                  <span className="text-emerald-400">{Math.round(((currentStep + 1) / PLACEMENT_QUESTIONS.length) * 100)}% Completed</span>
+                  <span className="text-emerald-400">{progressPercent}% Completed</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                <div
+                  role="progressbar"
+                  aria-valuenow={progressPercent}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label="Diagnostic test progress"
+                  className="w-full h-2 rounded-full bg-slate-800 overflow-hidden"
+                >
                   <div
                     className="h-full bg-gradient-to-r from-emerald-500 to-amber-400 transition-all duration-300"
-                    style={{ width: `${((currentStep + 1) / PLACEMENT_QUESTIONS.length) * 100}%` }}
+                    style={{ width: `${progressPercent}%` }}
                   />
                 </div>
               </div>
@@ -275,14 +302,17 @@ export default function AIPlacementTest({ isOpen, onClose, onSelectCourse }: AIP
                   <p className="text-xs text-slate-400 mt-1">{currentQuestion.subtitle}</p>
                 </div>
 
-                <div className="space-y-3">
+                <div role="radiogroup" aria-label={currentQuestion.title} className="space-y-3">
                   {currentQuestion.options.map((opt) => {
                     const isSelected = selectedAnswers[currentQuestion.id] === opt.value;
                     return (
                       <button
                         key={opt.value}
+                        type="button"
+                        role="radio"
+                        aria-checked={isSelected}
                         onClick={() => handleSelectOption(currentQuestion.id, opt.value)}
-                        className={`w-full p-4 rounded-2xl border text-left transition flex items-start gap-3 ${
+                        className={`w-full p-4 rounded-2xl border text-left transition flex items-start gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
                           isSelected
                             ? "bg-emerald-950/50 border-emerald-500/80 text-white shadow-lg shadow-emerald-950/50"
                             : "bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-950"
@@ -295,13 +325,13 @@ export default function AIPlacementTest({ isOpen, onClose, onSelectCourse }: AIP
                               : "border-slate-600"
                           }`}
                         >
-                          {isSelected && <Check size={12} strokeWidth={3} />}
+                          {isSelected && <Check size={12} strokeWidth={3} aria-hidden="true" />}
                         </div>
                         <div className="flex-1">
                           <p className="text-xs sm:text-sm font-semibold">{opt.label}</p>
                           {opt.hint && isSelected && (
                             <p className="text-[11px] text-amber-400 mt-1 flex items-center gap-1 font-medium">
-                              <Sparkles size={12} /> {opt.hint}
+                              <Sparkles size={12} aria-hidden="true" /> {opt.hint}
                             </p>
                           )}
                         </div>
@@ -316,6 +346,7 @@ export default function AIPlacementTest({ isOpen, onClose, onSelectCourse }: AIP
                 <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <button
+                      type="button"
                       onClick={() => {
                         setIsRecordingAudio(true);
                         setTimeout(() => {
@@ -323,7 +354,7 @@ export default function AIPlacementTest({ isOpen, onClose, onSelectCourse }: AIP
                           setAudioRecorded(true);
                         }, 2000);
                       }}
-                      className={`p-3 rounded-xl font-bold text-xs transition flex items-center gap-2 ${
+                      className={`p-3 rounded-xl font-bold text-xs transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
                         isRecordingAudio
                           ? "bg-rose-600 text-white animate-pulse"
                           : audioRecorded
@@ -331,7 +362,7 @@ export default function AIPlacementTest({ isOpen, onClose, onSelectCourse }: AIP
                           : "bg-amber-500 text-emerald-950 hover:bg-amber-400"
                       }`}
                     >
-                      <Mic size={16} />
+                      <Mic size={16} aria-hidden="true" />
                       <span>
                         {isRecordingAudio
                           ? "Listening to Recitation..."
@@ -350,29 +381,31 @@ export default function AIPlacementTest({ isOpen, onClose, onSelectCourse }: AIP
               {/* Footer navigation */}
               <div className="flex items-center justify-between pt-4 border-t border-slate-800">
                 <button
+                  type="button"
                   disabled={currentStep === 0}
                   onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
-                  className={`px-4 py-2.5 rounded-xl border text-xs font-bold transition flex items-center gap-2 ${
+                  className={`px-4 py-2.5 rounded-xl border text-xs font-bold transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
                     currentStep === 0
                       ? "opacity-40 border-slate-800 text-slate-500 cursor-not-allowed"
                       : "border-slate-700 bg-slate-800 text-slate-300 hover:text-white"
                   }`}
                 >
-                  <ArrowLeft size={16} />
+                  <ArrowLeft size={16} aria-hidden="true" />
                   <span>Previous</span>
                 </button>
 
                 <button
+                  type="button"
                   disabled={!selectedAnswers[currentQuestion.id]}
                   onClick={handleNext}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 ${
+                  className={`px-6 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
                     !selectedAnswers[currentQuestion.id]
                       ? "opacity-50 bg-slate-800 text-slate-500 cursor-not-allowed"
                       : "bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/30"
                   }`}
                 >
                   <span>{currentStep === PLACEMENT_QUESTIONS.length - 1 ? "Submit & Analyze" : "Next Question"}</span>
-                  <ArrowRight size={16} />
+                  <ArrowRight size={16} aria-hidden="true" />
                 </button>
               </div>
             </div>

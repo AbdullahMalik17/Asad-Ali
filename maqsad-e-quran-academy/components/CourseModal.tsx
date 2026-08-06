@@ -165,29 +165,46 @@ interface CourseModalProps {
 }
 
 export default function CourseModal({ courseId, onClose, onBookTrial }: CourseModalProps) {
+  React.useEffect(() => {
+    if (!courseId) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [courseId, onClose]);
+
   if (!courseId) return null;
   const course = COURSE_DETAILS[courseId] || COURSE_DETAILS.qaida;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-emerald-950/70 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-3xl shadow-2xl border border-emerald-100 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="course-modal-title"
+        className="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-3xl shadow-2xl border border-emerald-100 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+      >
         
         {/* Modal Header */}
         <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 text-white p-6 sm:p-7 relative">
           <button
+            type="button"
             onClick={onClose}
-            className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-900"
             aria-label="Close modal"
           >
-            <X size={20} />
+            <X size={20} aria-hidden="true" />
           </button>
           
           <span className="inline-block rounded-full bg-amber-400/20 text-amber-300 border border-amber-300/30 px-3 py-1 text-xs font-bold uppercase tracking-wider mb-2">
             {course.level} Level
           </span>
 
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
-            <BookOpen className="w-7 h-7 text-amber-400 shrink-0" />
+          <h2 id="course-modal-title" className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
+            <BookOpen className="w-7 h-7 text-amber-400 shrink-0" aria-hidden="true" />
             <span>{course.title}</span>
           </h2>
           <p className="mt-2 text-sm text-emerald-100/90 leading-relaxed">
@@ -201,7 +218,7 @@ export default function CourseModal({ courseId, onClose, onBookTrial }: CourseMo
           {/* Quick Info Grid */}
           <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-xs sm:text-sm">
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-emerald-700 shrink-0" />
+              <Clock className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
               <div>
                 <p className="text-[11px] text-gray-500 font-semibold uppercase">Duration</p>
                 <p className="font-bold text-emerald-950">{course.duration}</p>
@@ -209,7 +226,7 @@ export default function CourseModal({ courseId, onClose, onBookTrial }: CourseMo
             </div>
 
             <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-emerald-700 shrink-0" />
+              <Users className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
               <div>
                 <p className="text-[11px] text-gray-500 font-semibold uppercase">Students</p>
                 <p className="font-bold text-emerald-950">{course.recommendedAge}</p>
@@ -217,7 +234,7 @@ export default function CourseModal({ courseId, onClose, onBookTrial }: CourseMo
             </div>
 
             <div className="flex items-center gap-2">
-              <Award className="w-4 h-4 text-emerald-700 shrink-0" />
+              <Award className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
               <div>
                 <p className="text-[11px] text-gray-500 font-semibold uppercase">Prerequisite</p>
                 <p className="font-bold text-emerald-950 truncate">{course.prerequisites}</p>
@@ -239,7 +256,7 @@ export default function CourseModal({ courseId, onClose, onBookTrial }: CourseMo
             <div className="grid sm:grid-cols-2 gap-2.5">
               {course.syllabus.map((item, idx) => (
                 <div key={idx} className="flex items-start gap-2 text-xs sm:text-sm bg-white p-3 rounded-xl border border-slate-200/80 shadow-xs">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" aria-hidden="true" />
                   <span className="font-medium text-slate-800">{item}</span>
                 </div>
               ))}
@@ -252,7 +269,7 @@ export default function CourseModal({ courseId, onClose, onBookTrial }: CourseMo
             <ul className="space-y-2">
               {course.outcomes.map((outcome, idx) => (
                 <li key={idx} className="flex items-center gap-2.5 text-xs sm:text-sm font-semibold text-emerald-900 bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-400 text-[10px] font-extrabold text-emerald-950">✓</span>
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-400 text-[10px] font-extrabold text-emerald-950" aria-hidden="true">✓</span>
                   <span>{outcome}</span>
                 </li>
               ))}
@@ -263,21 +280,25 @@ export default function CourseModal({ courseId, onClose, onBookTrial }: CourseMo
         {/* Footer Actions */}
         <div className="p-4 sm:p-6 bg-slate-50 border-t border-slate-200/80 flex items-center justify-between gap-4">
           <button
+            type="button"
             onClick={onClose}
-            className="px-5 py-3 rounded-xl border border-slate-300 font-bold text-xs sm:text-sm text-slate-700 hover:bg-slate-100 transition-colors"
+            aria-label="Close modal window"
+            className="px-5 py-3 rounded-xl border border-slate-300 font-bold text-xs sm:text-sm text-slate-700 hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
           >
             Close
           </button>
           
           <button
+            type="button"
+            aria-label={`Book free trial for ${course.title}`}
             onClick={() => {
               onBookTrial(course.title);
               onClose();
             }}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 px-6 py-3 font-extrabold text-xs sm:text-sm text-emerald-950 shadow-md hover:shadow-lg transition-all hover:scale-105"
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 px-6 py-3 font-extrabold text-xs sm:text-sm text-emerald-950 shadow-md hover:shadow-lg transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
           >
             <span>Book Free Trial for This Course</span>
-            <ArrowRight size={16} />
+            <ArrowRight size={16} aria-hidden="true" />
           </button>
         </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { motion, Variants } from "framer-motion";
 import { BookOpen, BookText, Mic, Brain, Languages, PenTool, ArrowRight } from "lucide-react";
 import { useLanguage } from "./LanguageProvider";
@@ -23,63 +23,70 @@ export default function Courses() {
   const { t } = useLanguage();
   const [activeCourseModal, setActiveCourseModal] = useState<string | null>(null);
 
-  const handleBookTrialFromModal = (_courseTitle: string) => {
+  const handleBookTrialFromModal = useCallback((_courseTitle: string) => {
     const admissionsSection = document.getElementById("admissions");
     if (admissionsSection) {
       admissionsSection.scrollIntoView({ behavior: "smooth" });
     }
-  };
+  }, []);
 
-  const courses = [
-    {
-      id: "qaida",
-      title: t("courses.list.qaida.title"),
-      level: "Beginner",
-      description: t("courses.list.qaida.desc"),
-      icon: BookOpen,
-      badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
-    },
-    {
-      id: "reading",
-      title: t("courses.list.reading.title"),
-      level: "Intermediate",
-      description: t("courses.list.reading.desc"),
-      icon: BookText,
-      badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
-    },
-    {
-      id: "tajweed",
-      title: t("courses.list.tajweed.title"),
-      level: "All Levels",
-      description: t("courses.list.tajweed.desc"),
-      icon: Mic,
-      badgeColor: "bg-teal-100 text-teal-800 border-teal-200",
-    },
-    {
-      id: "hifz",
-      title: t("courses.list.hifz.title"),
-      level: "Advanced",
-      description: t("courses.list.hifz.desc"),
-      icon: Brain,
-      badgeColor: "bg-purple-100 text-purple-800 border-purple-200",
-    },
-    {
-      id: "tafseer",
-      title: t("courses.list.tafseer.title"),
-      level: "Intermediate",
-      description: t("courses.list.tafseer.desc"),
-      icon: Languages,
-      badgeColor: "bg-indigo-100 text-indigo-800 border-indigo-200",
-    },
-    {
-      id: "arabic",
-      title: t("courses.list.arabic.title"),
-      level: "All Levels",
-      description: t("courses.list.arabic.desc"),
-      icon: PenTool,
-      badgeColor: "bg-rose-100 text-rose-800 border-rose-200",
-    },
-  ];
+  const handleCloseModal = useCallback(() => {
+    setActiveCourseModal(null);
+  }, []);
+
+  const courses = useMemo(
+    () => [
+      {
+        id: "qaida",
+        title: t("courses.list.qaida.title"),
+        level: "Beginner",
+        description: t("courses.list.qaida.desc"),
+        icon: BookOpen,
+        badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+      },
+      {
+        id: "reading",
+        title: t("courses.list.reading.title"),
+        level: "Intermediate",
+        description: t("courses.list.reading.desc"),
+        icon: BookText,
+        badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
+      },
+      {
+        id: "tajweed",
+        title: t("courses.list.tajweed.title"),
+        level: "All Levels",
+        description: t("courses.list.tajweed.desc"),
+        icon: Mic,
+        badgeColor: "bg-teal-100 text-teal-800 border-teal-200",
+      },
+      {
+        id: "hifz",
+        title: t("courses.list.hifz.title"),
+        level: "Advanced",
+        description: t("courses.list.hifz.desc"),
+        icon: Brain,
+        badgeColor: "bg-purple-100 text-purple-800 border-purple-200",
+      },
+      {
+        id: "tafseer",
+        title: t("courses.list.tafseer.title"),
+        level: "Intermediate",
+        description: t("courses.list.tafseer.desc"),
+        icon: Languages,
+        badgeColor: "bg-indigo-100 text-indigo-800 border-indigo-200",
+      },
+      {
+        id: "arabic",
+        title: t("courses.list.arabic.title"),
+        level: "All Levels",
+        description: t("courses.list.arabic.desc"),
+        icon: PenTool,
+        badgeColor: "bg-rose-100 text-rose-800 border-rose-200",
+      },
+    ],
+    [t]
+  );
 
   return (
     <>
@@ -92,7 +99,7 @@ export default function Courses() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, amount: 0.01 }}
             transition={{ duration: 0.6 }}
             className="text-center max-w-3xl mx-auto mb-10 sm:mb-12"
           >
@@ -111,13 +118,13 @@ export default function Courses() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, amount: 0.01 }}
             className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
           >
             {courses.map((course) => {
               const Icon = course.icon;
               return (
-                <motion.div
+                <motion.article
                   variants={itemVariants}
                   key={course.id}
                   className="group relative flex flex-col justify-between rounded-3xl border border-gray-200/80 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-300 hover:shadow-2xl hover:shadow-emerald-900/10"
@@ -125,7 +132,7 @@ export default function Courses() {
                   <div>
                     <div className="flex items-center justify-between gap-3 mb-6">
                       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/80 text-emerald-800 shadow-inner group-hover:bg-emerald-800 group-hover:text-white transition-colors duration-300">
-                        <Icon size={28} strokeWidth={2} />
+                        <Icon size={28} strokeWidth={2} aria-hidden="true" />
                       </div>
 
                       <span className={`rounded-full border px-3 py-1 text-xs font-bold ${course.badgeColor}`}>
@@ -144,14 +151,16 @@ export default function Courses() {
 
                   <div className="mt-8 pt-4">
                     <button
+                      type="button"
+                      aria-label={`Learn more about ${course.title}`}
                       onClick={() => setActiveCourseModal(course.id)}
-                      className="flex items-center justify-center gap-2 w-full rounded-xl bg-emerald-50 px-5 py-3 text-sm font-bold text-emerald-900 transition-all duration-300 group-hover:bg-emerald-800 group-hover:text-white shadow-sm cursor-pointer"
+                      className="flex items-center justify-center gap-2 w-full rounded-xl bg-emerald-50 px-5 py-3 text-sm font-bold text-emerald-900 transition-all duration-300 group-hover:bg-emerald-800 group-hover:text-white shadow-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
                     >
-                      <span>View Syllabus & Outline</span>
-                      <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                      <span>{t("courses.learnMore")}</span>
+                      <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
                     </button>
                   </div>
-                </motion.div>
+                </motion.article>
               );
             })}
           </motion.div>
@@ -160,7 +169,7 @@ export default function Courses() {
 
       <CourseModal
         courseId={activeCourseModal}
-        onClose={() => setActiveCourseModal(null)}
+        onClose={handleCloseModal}
         onBookTrial={handleBookTrialFromModal}
       />
     </>

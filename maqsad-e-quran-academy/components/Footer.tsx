@@ -1,7 +1,28 @@
 import Image from "next/image";
-import { Mail, MessageCircle, Phone, ArrowUpRight, Heart } from "lucide-react";
+import { Mail, MessageCircle, Phone, ArrowUpRight, Heart, Sparkles, ChevronRight } from "lucide-react";
+import { useLanguage } from "./LanguageProvider";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
+  const navItems = [
+    { name: t("nav.home"), href: "#home" },
+    { name: t("nav.about"), href: "#about" },
+    { name: t("nav.courses"), href: "#courses" },
+    { name: t("nav.teachers"), href: "#teachers" },
+    { name: t("nav.reviews"), href: "#reviews" },
+    { name: t("nav.trial"), href: "#admissions" },
+  ];
+
+  const courseList = [
+    t("courses.list.qaida.title"),
+    t("courses.list.reading.title"),
+    t("courses.list.tajweed.title"),
+    t("courses.list.hifz.title"),
+    t("courses.list.tafseer.title"),
+    t("courses.list.arabic.title"),
+  ];
+
   return (
     <footer className="relative bg-emerald-950 text-white overflow-hidden">
       {/* Decorative top gold gradient border */}
@@ -35,131 +56,101 @@ export default function Footer() {
               </div>
             </div>
 
-            <p className="text-sm leading-relaxed text-emerald-100/90 pt-2">
-              Authentic 1-on-1 online Quran classes for kids and adults worldwide with qualified male and female certified tutors.
+            <p className="text-sm leading-relaxed text-emerald-100/90 font-medium pt-1">
+              {t("footer.aboutDesc")}
             </p>
 
-            <div className="pt-2 flex items-center gap-2 text-xs text-amber-300 font-semibold">
-              <span>✦ Certified Teachers</span>
+            <div className="pt-2 flex items-center gap-2 text-xs text-amber-300 font-bold">
+              <span className="flex items-center gap-1"><Sparkles size={12} className="text-amber-400" /> {t("hero.badge1")}</span>
               <span>•</span>
-              <span>24/7 Classes</span>
+              <span>{t("hero.badge3")}</span>
             </div>
           </div>
 
           {/* Quick Navigation */}
           <div>
-            <h3 className="text-sm font-extrabold uppercase tracking-wider text-amber-400 border-b border-white/10 pb-2">
-              Quick Navigation
+            <h3 className="text-sm font-black uppercase tracking-wider text-amber-400 border-b border-white/10 pb-2.5">
+              {t("footer.quickLinks")}
             </h3>
 
-            <ul className="mt-4 space-y-2.5 text-sm text-emerald-100/90">
-              <li>
-                <a href="#home" className="hover:text-amber-300 transition-colors flex items-center gap-1">
-                  <span>Home</span>
-                </a>
-              </li>
-              <li>
-                <a href="#about" className="hover:text-amber-300 transition-colors flex items-center gap-1">
-                  <span>About Us</span>
-                </a>
-              </li>
-              <li>
-                <a href="#courses" className="hover:text-amber-300 transition-colors flex items-center gap-1">
-                  <span>Courses</span>
-                </a>
-              </li>
-              <li>
-                <a href="#teachers" className="hover:text-amber-300 transition-colors flex items-center gap-1">
-                  <span>Faculty Tutors</span>
-                </a>
-              </li>
-              <li>
-                <a href="#reviews" className="hover:text-amber-300 transition-colors flex items-center gap-1">
-                  <span>Student Reviews</span>
-                </a>
-              </li>
-              <li>
-                <a href="#admissions" className="hover:text-amber-300 transition-colors flex items-center gap-1">
-                  <span>Free Trial Class</span>
-                </a>
-              </li>
+            <ul className="mt-4 space-y-2.5 text-sm text-emerald-100/90 font-medium">
+              {navItems.map((item) => (
+                <li key={item.href + item.name}>
+                  <a href={item.href} className="group flex items-center gap-1.5 hover:text-amber-300 transition-all duration-300 hover:translate-x-1">
+                    <ChevronRight size={14} className="text-amber-400/60 group-hover:text-amber-300 transition-colors" />
+                    <span>{item.name}</span>
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Featured Courses */}
           <div>
-            <h3 className="text-sm font-extrabold uppercase tracking-wider text-amber-400 border-b border-white/10 pb-2">
+            <h3 className="text-sm font-black uppercase tracking-wider text-amber-400 border-b border-white/10 pb-2.5">
               Our Key Programs
             </h3>
 
-            <ul className="mt-4 space-y-2.5 text-sm text-emerald-100/90">
-              <li>
-                <a href="#courses" className="hover:text-amber-300 transition-colors">
-                  Noorani Qaida for Kids
-                </a>
-              </li>
-              <li>
-                <a href="#courses" className="hover:text-amber-300 transition-colors">
-                  Quran Reading (Nazra)
-                </a>
-              </li>
-              <li>
-                <a href="#courses" className="hover:text-amber-300 transition-colors">
-                  Tajweed Rules Course
-                </a>
-              </li>
-              <li>
-                <a href="#courses" className="hover:text-amber-300 transition-colors">
-                  Hifz-ul-Quran (Memorization)
-                </a>
-              </li>
-              <li>
-                <a href="#courses" className="hover:text-amber-300 transition-colors">
-                  Translation & Tafseer
-                </a>
-              </li>
-              <li>
-                <a href="#courses" className="hover:text-amber-300 transition-colors">
-                  Arabic Language Course
-                </a>
-              </li>
+            <ul className="mt-4 space-y-2.5 text-sm text-emerald-100/90 font-medium">
+              {[
+                "Noorani Qaida for Kids",
+                "Quran Reading (Nazra)",
+                "Tajweed Rules Course",
+                "Hifz-ul-Quran (Memorization)",
+                "Translation & Tafseer",
+                "Arabic Language Course",
+              ].map((course) => (
+                <li key={course}>
+                  <a
+                    href="#courses"
+                    aria-label={`Explore course ${course}`}
+                    className="group flex items-center gap-1.5 hover:text-amber-300 transition-all duration-300 hover:translate-x-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 rounded-sm"
+                  >
+                    <ChevronRight size={14} className="text-amber-400/60 group-hover:text-amber-300 transition-colors" aria-hidden="true" />
+                    <span>{course}</span>
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contact & Support */}
           <div>
-            <h3 className="text-sm font-extrabold uppercase tracking-wider text-amber-400 border-b border-white/10 pb-2">
+            <h3 className="text-sm font-black uppercase tracking-wider text-amber-400 border-b border-white/10 pb-2.5">
               Contact & Support
             </h3>
 
-            <div className="mt-4 space-y-3.5 text-sm text-emerald-100/90">
+            <div className="mt-4 space-y-3 text-sm text-emerald-100/90 font-medium">
               <a
                 href="tel:+923301676985"
-                className="flex items-center gap-3 p-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-amber-400/40 transition"
+                aria-label="Call Maqsad-e-Quran Academy"
+                className="flex items-center gap-3 p-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 hover:border-amber-400/50 hover:shadow-[0_0_20px_rgba(251,191,36,0.15)] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950"
               >
-                <Phone size={18} className="text-amber-400 shrink-0" />
+                <Phone size={18} className="text-amber-400 shrink-0" aria-hidden="true" />
                 <span>+92 330 1676985</span>
               </a>
 
               <a
                 href="mailto:maqsadquran@gmail.com"
-                className="flex items-center gap-3 p-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-amber-400/40 transition"
+                aria-label="Email Maqsad-e-Quran Academy"
+                className="flex items-center gap-3 p-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 hover:border-amber-400/50 hover:shadow-[0_0_20px_rgba(251,191,36,0.15)] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950"
               >
-                <Mail size={18} className="text-amber-400 shrink-0" />
+                <Mail size={18} className="text-amber-400 shrink-0" aria-hidden="true" />
                 <span className="truncate">maqsadquran@gmail.com</span>
               </a>
 
               <a
                 href="https://wa.me/923301676985"
                 target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-emerald-800 to-emerald-900 border border-emerald-500/30 hover:border-amber-400 text-white font-bold transition shadow-md group"
+                rel="noreferrer noopener"
+                aria-label="Chat with Maqsad-e-Quran Academy on WhatsApp 24/7"
+                className="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-emerald-800 via-emerald-900 to-emerald-950 border border-amber-400/40 hover:border-amber-400 text-white font-bold transition-all duration-300 shadow-lg hover:shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:scale-[1.02] group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950"
               >
                 <div className="flex items-center gap-2">
-                  <MessageCircle size={18} className="text-amber-400" />
+                  <MessageCircle size={18} className="text-amber-400" aria-hidden="true" />
                   <span>WhatsApp 24/7</span>
                 </div>
-                <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 text-amber-400" aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -167,12 +158,12 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-14 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-emerald-200">
+        <div className="mt-14 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-emerald-200 font-medium">
           <p>© 2026 Maqsad-e-Quran Academy. All rights reserved.</p>
           
-          <p className="flex items-center gap-1">
+          <p className="flex items-center gap-1.5">
             <span>Dedicated to spreading authentic Quranic knowledge</span>
-            <Heart size={12} className="text-amber-400 fill-amber-400 inline" />
+            <Heart size={12} className="text-amber-400 fill-amber-400 inline" aria-hidden="true" />
           </p>
         </div>
       </div>

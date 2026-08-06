@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   X,
   Check,
@@ -164,7 +164,14 @@ export default function PaymentGatewayModal({
     currency: string;
   } | null>(null);
 
-  // Sync props when modal opens
+  // Computed package & payment values
+  const packageName = packageDetails?.name || "Standard Quran Course";
+  const baseAmount = packageDetails?.amount || 50;
+  const curr = CURRENCIES[selectedCurrency] || CURRENCIES.USD;
+  const currSymbol = curr.symbol;
+  const finalAmount = selectedCurrency === "USD" ? baseAmount : Math.round(baseAmount * curr.rateFromUSD);
+
+  // Sync props when modal opens & handle Escape key
   useEffect(() => {
     if (isOpen) {
       if (packageDetails?.currency) {
@@ -177,33 +184,26 @@ export default function PaymentGatewayModal({
       setErrorMessage("");
       setPaymentCompleted(false);
       setCompletedDetails(null);
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          onClose();
+        }
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
     }
-  }, [isOpen, packageDetails, studentDetails]);
-
-  if (!isOpen) return null;
-
-  // Calculate pricing based on currency conversion
-  const rawBaseAmount = packageDetails?.amount || 50;
-  const curr = CURRENCIES[selectedCurrency] || CURRENCIES.USD;
-  
-  // Convert base USD price to selected currency
-  const finalAmount =
-    selectedCurrency === "USD"
-      ? rawBaseAmount
-      : Math.round(rawBaseAmount * curr.rateFromUSD);
-
-  const packageName =
-    packageDetails?.name || "Standard Quran Learning Package (3 Days/wk)";
+  }, [isOpen, packageDetails, studentDetails, onClose]);
 
   // Copy helper
-  const handleCopy = (text: string, label: string) => {
+  const handleCopy = useCallback((text: string, label: string) => {
     navigator.clipboard.writeText(text);
     setCopiedField(label);
     setTimeout(() => setCopiedField(null), 2000);
-  };
+  }, []);
 
   // Online gateway handlers (Stripe / PayPal)
-  const handleInitiateOnlineCheckout = async () => {
+  const handleInitiateOnlineCheckout = useCallback(async () => {
     if (!studentEmail.trim()) {
       setErrorMessage("Please enter a valid student email address.");
       return;
@@ -264,10 +264,10 @@ export default function PaymentGatewayModal({
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [studentEmail, selectedGateway, packageName, finalAmount, selectedCurrency, studentName]);
 
-  // Offline / Transfer gateway verification submission (Wise, Payoneer, JazzCash, Easypaisa)
-  const handleSubmitManualTransaction = (e: React.FormEvent) => {
+  // Offline / Transfer gateway verification submission
+  const handleSubmitManualTransaction = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (!transactionIdInput.trim()) {
       setErrorMessage("Please enter your Transfer Transaction / Reference ID.");
@@ -282,9 +282,9 @@ export default function PaymentGatewayModal({
       GATEWAYS.find((g) => g.id === selectedGateway)?.name || selectedGateway;
 
     completePaymentSuccess(gatewayName, transactionIdInput.trim());
-  };
+  }, [transactionIdInput, studentEmail, selectedGateway]);
 
-  const completePaymentSuccess = (gatewayLabel: string, txId: string) => {
+  const completePaymentSuccess = useCallback((gatewayLabel: string, txId: string) => {
     setPaymentCompleted(true);
     setCompletedDetails({
       txId,
@@ -326,29 +326,37 @@ export default function PaymentGatewayModal({
         studentEmail,
       });
     }
-  };
+  }, [finalAmount, selectedCurrency, studentEmail, studentName, studentDetails, packageName, studentPhone, onSuccess]);
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-slate-950/80 backdrop-blur-md transition-all animate-fadeIn">
       {/* Modal Container */}
-      <div className="relative w-full max-w-3xl bg-slate-900 border border-slate-800 text-white rounded-3xl shadow-2xl overflow-hidden flex flex-col my-auto max-h-[92vh]">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="payment-modal-title"
+        className="relative w-full max-w-3xl bg-slate-900 border border-slate-800 text-white rounded-3xl shadow-2xl overflow-hidden flex flex-col my-auto max-h-[92vh]"
+      >
         
         {/* Header Bar */}
         <div className="relative bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-950 p-6 sm:p-8 border-b border-slate-800">
           <button
+            type="button"
             onClick={onClose}
-            className="absolute top-5 right-5 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
-            aria-label="Close Modal"
+            className="absolute top-5 right-5 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+            aria-label="Close Payment Modal"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
 
           <div className="flex flex-wrap items-center justify-between gap-4 pr-8">
             <div>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-400/20 text-amber-300 border border-amber-300/30 mb-2">
-                <Sparkles className="w-3.5 h-3.5" /> Direct Academy Checkout
+                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" /> Direct Academy Checkout
               </span>
-              <h2 className="text-xl sm:text-2xl font-black text-white">
+              <h2 id="payment-modal-title" className="text-xl sm:text-2xl font-black text-white">
                 {packageName}
               </h2>
               <p className="text-xs sm:text-sm text-slate-400 mt-1">
@@ -359,11 +367,12 @@ export default function PaymentGatewayModal({
             {/* Total Price Display & Currency Selector */}
             <div className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-3 sm:px-5 text-right flex flex-col items-end">
               <div className="flex items-center gap-2 mb-1">
-                <Globe className="w-3.5 h-3.5 text-emerald-400" />
+                <Globe className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
                 <select
                   value={selectedCurrency}
                   onChange={(e) => setSelectedCurrency(e.target.value)}
-                  className="bg-slate-900 text-xs font-bold text-amber-400 rounded-lg px-2 py-1 border border-slate-700 outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+                  aria-label="Select currency for checkout"
+                  className="bg-slate-900 text-xs font-bold text-amber-400 rounded-lg px-2 py-1 border border-slate-700 outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
                 >
                   {Object.values(CURRENCIES).map((c) => (
                     <option key={c.code} value={c.code}>

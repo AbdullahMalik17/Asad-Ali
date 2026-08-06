@@ -1,4 +1,6 @@
-import { Metadata } from "next";
+"use client";
+
+import React from "react";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
@@ -7,17 +9,8 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const resolvedParams = await params;
-  const title = resolvedParams.slug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-  return {
-    title: `${title} | Maqsad-e-Quran Blog`,
-    description: `Read our comprehensive guide on ${title}.`,
-  };
-}
-
-export default async function BlogPost({ params }: Props) {
-  const resolvedParams = await params;
+export default function BlogPost({ params }: Props) {
+  const resolvedParams = React.use(params);
   const title = resolvedParams.slug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
   
   return (

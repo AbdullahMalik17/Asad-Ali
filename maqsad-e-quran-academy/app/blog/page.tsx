@@ -1,12 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { Metadata } from "next";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
-
-export const metadata: Metadata = {
-  title: "Islamic Blog & Resources",
-  description: "Read our latest articles on Quranic studies, Tajweed, Hifz, and Islamic education.",
-};
 
 const posts = [
   {

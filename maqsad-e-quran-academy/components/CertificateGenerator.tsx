@@ -173,68 +173,17 @@ export default function CertificateGenerator() {
         doc.setFont("helvetica", "italic");
         doc.setFontSize(10);
         doc.setTextColor(71, 85, 105);
-        const splitText = doc.splitTextToSize(`"${data.appreciationText}"`, width - 80);
-        doc.text(splitText, width / 2, 124, { align: "center" });
+        doc.text(`"${data.appreciationText}"`, width / 2, 124, { align: "center" });
       }
 
-      // Hadith Quote
-      doc.setFillColor(241, 245, 249);
-      doc.rect(50, 138, width - 100, 14, "F");
-      doc.setFont("helvetica", "italic");
+      // Description
+      doc.setFont("helvetica", "normal");
       doc.setFontSize(9.5);
-      doc.setTextColor(15, 23, 42);
-      doc.text(
-        '"The best among you are those who learn the Quran and teach it." - Sahih Al-Bukhari',
-        width / 2,
-        146,
-        { align: "center" }
+      doc.setTextColor(100, 116, 139);
+      const splitDesc = doc.splitTextToSize(
+        "Demonstrated exceptional proficiency in Quranic Tajweed, correct Makhraj pronunciation, active recitation fluency, and adherence to authentic Tarteel principles.",
+        width - 80
       );
-
-      // Footer - Dates, Signatures, Serial
-      const lineY = 175;
-
-      // Instructor Signature
-      doc.setDrawColor(148, 163, 184);
-      doc.setLineWidth(0.5);
-      doc.line(40, lineY, 100, lineY);
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(10);
-      doc.setTextColor(15, 23, 42);
-      doc.text(data.instructorName, 70, lineY + 5, { align: "center" });
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.setTextColor(100, 116, 139);
-      doc.text("Course Lead Instructor", 70, lineY + 10, { align: "center" });
-
-      // Academy Seal Badge (Middle)
-      doc.setFillColor(6, 78, 59);
-      doc.circle(width / 2, lineY - 2, 14, "F");
-      doc.setDrawColor(217, 119, 6);
-      doc.setLineWidth(1);
-      doc.circle(width / 2, lineY - 2, 12, "S");
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(8);
-      doc.setTextColor(255, 255, 255);
-      doc.text("VERIFIED", width / 2, lineY - 4, { align: "center" });
-      doc.text("ACADEMY", width / 2, lineY, { align: "center" });
-      doc.text("SEAL", width / 2, lineY + 4, { align: "center" });
-
-      // Director Signature
-      doc.setDrawColor(148, 163, 184);
-      doc.setLineWidth(0.5);
-      doc.line(width - 100, lineY, width - 40, lineY);
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(10);
-      doc.setTextColor(15, 23, 42);
-      doc.text("Dr. Ustadh Ahmad Al-Mansoor", width - 70, lineY + 5, { align: "center" });
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.setTextColor(100, 116, 139);
-      doc.text("Director of Academic Affairs", width - 70, lineY + 10, { align: "center" });
-
-      // Bottom Bar - Date & Serial ID
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(8.5);
       doc.setTextColor(71, 85, 105);
       doc.text(`Issue Date: ${data.completionDate}`, 20, height - 12);
       doc.text(`Verification Serial: ${data.certificateId}`, width - 20, height - 12, { align: "right" });

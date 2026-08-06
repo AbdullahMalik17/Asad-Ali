@@ -1,3 +1,5 @@
+"use client";
+
 import About from "@/components/About";
 import AcademyHighlights from "@/components/AcademyHighlights";
 import AudioPreview from "@/components/AudioPreview";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { FileCheck, Download, Printer, Sparkles, User, Award, CheckCircle, BarChart3 } from "lucide-react";
 import jsPDF from "jspdf";
 
@@ -116,202 +116,133 @@ export default function ReportCardGenerator() {
     setData({ ...preset });
   };
 
-  const generatePDF = () => {
+  const handleDownloadPDF = useCallback(() => {
     setIsGenerating(true);
-
     try {
-      // Portrait A4: 210mm x 297mm
       const doc = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
       });
 
-      const width = 210;
-      const height = 297;
+      const width = doc.internal.pageSize.getWidth();
+      const height = doc.internal.pageSize.getHeight();
 
-      // Header Banner Background (#0f172a -> Slate 900)
-      doc.setFillColor(15, 23, 42);
+      // Top Dark Header
+      doc.setFillColor(15, 23, 42); // slate-900
       doc.rect(0, 0, width, 40, "F");
 
-      // Gold Decorative Stripe (#d97706)
-      doc.setFillColor(217, 119, 6);
-      doc.rect(0, 40, width, 3, "F");
+      doc.setFillColor(16, 185, 129); // emerald-500
+      doc.rect(0, 40, width, 2, "F");
 
-      // Title & Academy Name
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(255, 255, 255);
       doc.setFontSize(18);
+      doc.setTextColor(255, 255, 255);
       doc.text("MAQSAD-E-QURAN ACADEMY", 15, 18);
 
-      doc.setFontSize(10);
-      doc.setFont("helvetica", "normal");
-      doc.setTextColor(217, 119, 6);
-      doc.text("STUDENT MONTHLY PROGRESS REPORT CARD", 15, 25);
+      doc.setFontSize(11);
+      doc.setTextColor(16, 185, 129);
+      doc.text("MONTHLY ACADEMIC & TAJWEED REPORT CARD", 15, 26);
 
       doc.setFontSize(9);
       doc.setTextColor(148, 163, 184);
-      doc.text(`Reporting Period: ${data.reportMonth}`, width - 15, 18, { align: "right" });
-      doc.text(`Ref ID: ${data.studentId}`, width - 15, 25, { align: "right" });
+      doc.text(`Evaluation Period: ${data.reportMonth}`, width - 15, 18, { align: "right" });
+      doc.text(`Report ID: RPT-${Date.now().toString().slice(-6)}`, width - 15, 26, { align: "right" });
 
-      // Student Info Box (Y = 50)
+      // Student Info Box
       let y = 52;
       doc.setFillColor(248, 250, 252);
-      doc.rect(15, y, width - 30, 26, "F");
+      doc.rect(15, y, width - 30, 28, "F");
       doc.setDrawColor(226, 232, 240);
-      doc.setLineWidth(0.5);
-      doc.rect(15, y, width - 30, 26, "S");
+      doc.rect(15, y, width - 30, 28, "S");
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(12);
       doc.setTextColor(15, 23, 42);
-      doc.text(`Student: ${data.studentName}`, 20, y + 8);
+      doc.text(`Student: ${data.studentName.trim() || "Student Name"}`, 20, y + 8);
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9.5);
       doc.setTextColor(71, 85, 105);
-      doc.text(`Course: ${data.courseTitle}`, 20, y + 15);
-      doc.text(`Assigned Teacher: ${data.teacherName}`, 20, y + 21);
+      doc.text(`Enrolled Course: ${data.courseTitle}`, 20, y + 15);
+      doc.text(`Tutor: ${data.teacherName}`, 20, y + 22);
 
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(16, 185, 129);
-      doc.text(`Overall Score: ${overallGPA}%`, width - 20, y + 12, { align: "right" });
+      doc.setTextColor(6, 78, 59);
+      doc.text(`Overall Attendance: ${attendancePercentage}%`, width - 20, y + 15, { align: "right" });
 
-      // Attendance Metrics Section (Y = 86)
-      y = 86;
+      // Assessment Table
+      y = 90;
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
       doc.setTextColor(6, 78, 59);
-      doc.text("1. ATTENDANCE & PARTICIPATION SUMMARY", 15, y);
+      doc.text("TAJWEED & RECITATION COMPETENCY SCORES", 15, y);
 
       y += 4;
-      doc.setFillColor(236, 253, 245);
-      doc.rect(15, y, width - 30, 18, "F");
-      doc.setDrawColor(167, 243, 208);
-      doc.rect(15, y, width - 30, 18, "S");
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.setTextColor(15, 23, 42);
-      doc.text(`Total Scheduled Classes: ${data.totalClasses}`, 20, y + 7);
-      doc.text(`Classes Attended: ${data.classesAttended}`, 80, y + 7);
-      doc.text(`Late Arrivals: ${data.lateClasses}`, 145, y + 7);
-
-      doc.text(`Unexcused Absences: ${data.absentClasses}`, 20, y + 13);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(5, 150, 105);
-      doc.text(`Attendance Rate: ${attendancePercentage}%`, 145, y + 13);
-
-      // Academic Ratings Table (Y = 116)
-      y = 116;
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.setTextColor(6, 78, 59);
-      doc.text("2. ACADEMIC & SKILL ASSESSMENT", 15, y);
-
-      y += 4;
-      // Table Header
       doc.setFillColor(15, 23, 42);
       doc.rect(15, y, width - 30, 8, "F");
+
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9);
       doc.setTextColor(255, 255, 255);
-      doc.text("Evaluation Category", 20, y + 5.5);
-      doc.text("Score / 100", 110, y + 5.5);
-      doc.text("Grade Level", 160, y + 5.5);
+      doc.text("Subject / Skill Area", 20, y + 5.5);
+      doc.text("Mastery Benchmark", 110, y + 5.5);
+      doc.text("Score / 100", 165, y + 5.5);
 
-      const subjects = [
-        { name: "Tajweed & Makharij Pronunciation", score: data.tajweedScore },
-        { name: "Hifz & Quran Memorization Retention", score: data.memorizationScore },
-        { name: "Recitation Fluency & Voice Tone", score: data.fluencyScore },
-        { name: "Homework & Assignment Completion", score: data.homeworkScore },
-        { name: "Class Discipline, Respect & Adab", score: data.conductScore },
+      const skills = [
+        { name: "Makharij (Articulation Points)", target: "Phonetic Precision", score: data.tajweedScore },
+        { name: "Tajweed Rules (Noon/Meem Sakinah)", target: "Ghunna & Ikhfa", score: data.tajweedScore },
+        { name: "Fluency & Rhythmic Speed (Tarteel)", target: "Consistent Tempo", score: data.fluencyScore },
+        { name: "Hifz / Memorization Retention", target: "Revision Accuracy", score: data.memorizationScore },
       ];
 
       y += 8;
-      subjects.forEach((sub, i) => {
-        const bg = i % 2 === 0 ? 255 : 248;
+      skills.forEach((sk, idx) => {
+        const bg = idx % 2 === 0 ? 255 : 248;
         doc.setFillColor(bg, bg, bg);
         doc.rect(15, y, width - 30, 8, "F");
 
         doc.setFont("helvetica", "normal");
         doc.setFontSize(9);
         doc.setTextColor(30, 41, 59);
-        doc.text(sub.name, 20, y + 5.5);
+        doc.text(sk.name, 20, y + 5.5);
+        doc.text(sk.target, 110, y + 5.5);
 
         doc.setFont("helvetica", "bold");
-        doc.text(`${sub.score}%`, 110, y + 5.5);
-
-        const letterGrade =
-          sub.score >= 95 ? "A+ (Mumtaz)" : sub.score >= 90 ? "A (Very Good)" : sub.score >= 80 ? "B+ (Good)" : "Pass";
-        doc.setTextColor(sub.score >= 90 ? 5 : 217, sub.score >= 90 ? 150 : 119, sub.score >= 90 ? 105 : 6);
-        doc.text(letterGrade, 160, y + 5.5);
+        doc.setTextColor(sk.score >= 80 ? 16 : 217, sk.score >= 80 ? 185 : 119, sk.score >= 80 ? 129 : 6);
+        doc.text(`${sk.score}%`, 165, y + 5.5);
 
         doc.setDrawColor(226, 232, 240);
         doc.line(15, y + 8, width - 15, y + 8);
         y += 8;
       });
 
-      // Teacher Comments Box (Y = 168)
-      y += 6;
+      // Teacher Notes Section
+      y += 12;
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
       doc.setTextColor(6, 78, 59);
-      doc.text("3. TEACHER MONTHLY REMARKS & OBSERVATIONS", 15, y);
+      doc.text("TEACHER REMARKS & PROGRESS RECOMMENDATIONS", 15, y);
 
       y += 4;
-      doc.setFillColor(254, 252, 232);
-      doc.rect(15, y, width - 30, 24, "F");
-      doc.setDrawColor(254, 240, 138);
-      doc.rect(15, y, width - 30, 24, "S");
+      doc.setFillColor(248, 250, 252);
+      doc.rect(15, y, width - 30, 32, "F");
+      doc.setDrawColor(226, 232, 240);
+      doc.rect(15, y, width - 30, 32, "S");
 
-      doc.setFont("helvetica", "italic");
-      doc.setFontSize(9.5);
-      doc.setTextColor(30, 41, 59);
-      const splitRemarks = doc.splitTextToSize(`"${data.teacherComments}"`, width - 40);
-      doc.text(splitRemarks, 20, y + 7);
-
-      // Target Focus Next Month
-      y += 30;
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.setTextColor(6, 78, 59);
-      doc.text("4. RECOMMENDED FOCUS FOR UPCOMING MONTH", 15, y);
-
-      y += 4;
-      doc.setFillColor(241, 245, 249);
-      doc.rect(15, y, width - 30, 16, "F");
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.setTextColor(30, 41, 59);
-      const splitFocus = doc.splitTextToSize(data.nextMonthFocus, width - 40);
-      doc.text(splitFocus, 20, y + 7);
+      doc.setFontSize(9.5);
+      doc.setTextColor(51, 65, 85);
+      const splitRemarks = doc.splitTextToSize(
+        data.teacherComments.trim() || "Consistently demonstrates great effort and dedication during 1-on-1 sessions.",
+        width - 40
+      );
+      doc.text(splitRemarks, 20, y + 8);
 
-      // Signature & Footer (Y = 245)
-      y = 250;
+      // Signatures
+      y += 48;
       doc.setDrawColor(148, 163, 184);
       doc.setLineWidth(0.5);
-      doc.line(20, y, 75, y);
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(9.5);
-      doc.setTextColor(15, 23, 42);
-      doc.text(data.teacherName, 47.5, y + 5, { align: "center" });
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8.5);
-      doc.setTextColor(100, 116, 139);
-      doc.text("Assigned Quran Tutor", 47.5, y + 10, { align: "center" });
-
-      doc.line(width - 75, y, width - 20, y);
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(9.5);
-      doc.setTextColor(15, 23, 42);
-      doc.text("Dr. Ustadh Ahmad Al-Mansoor", width - 47.5, y + 5, { align: "center" });
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8.5);
-      doc.setTextColor(100, 116, 139);
-      doc.text("Director of Education", width - 47.5, y + 10, { align: "center" });
-
-      // Footer line
       doc.setFillColor(15, 23, 42);
       doc.rect(0, height - 12, width, 12, "F");
       doc.setFont("helvetica", "normal");
@@ -329,7 +260,7 @@ export default function ReportCardGenerator() {
     } finally {
       setIsGenerating(false);
     }
-  };
+  }, [data]);
 
   const handlePrint = () => {
     window.print();
@@ -353,11 +284,13 @@ export default function ReportCardGenerator() {
 
         <div className="flex flex-wrap gap-3">
           <button
-            onClick={generatePDF}
+            type="button"
+            aria-label="Export Report Card PDF"
+            onClick={handleDownloadPDF}
             disabled={isGenerating}
-            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-extrabold text-xs shadow-xl transition active:scale-95 disabled:opacity-50 cursor-pointer"
+            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-extrabold text-xs shadow-xl transition active:scale-95 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
           >
-            <Download size={16} />
+            <Download size={16} aria-hidden="true" />
             <span>{isGenerating ? "Generating PDF..." : "Export Report Card PDF"}</span>
           </button>
 

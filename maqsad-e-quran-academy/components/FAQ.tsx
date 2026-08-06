@@ -1,107 +1,144 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, Sparkles, ArrowRight, HelpCircle } from "lucide-react";
+import { useLanguage } from "./LanguageProvider";
 
-const faqs = [
+const defaultFaqs = [
   {
-    question: "How do online Quran classes work?",
-    answer:
-      "Classes are conducted live through Zoom, Google Meet or another suitable platform. Each student receives one-to-one attention from a qualified teacher.",
+    q: "How do online Quran classes work?",
+    a: "Classes are conducted live through Zoom, Google Meet or another suitable platform. Each student receives one-to-one attention from a qualified teacher.",
   },
   {
-    question: "Do you provide male and female Quran teachers?",
-    answer:
-      "Yes. We have more than 50 qualified male and female teachers. Students may select a teacher according to their preference.",
+    q: "Do you provide male and female Quran teachers?",
+    a: "Yes. We have more than 50 qualified male and female teachers. Students may select a teacher according to their preference.",
   },
   {
-    question: "Is a free trial class available?",
-    answer:
-      "Yes. Every new student can book a free trial class before completing admission.",
+    q: "Is a free trial class available?",
+    a: "Yes. Every new student can book a free trial class before completing admission.",
   },
   {
-    question: "Which courses are available?",
-    answer:
-      "We offer Noorani Qaida, Quran Reading, Tajweed, Hifz-ul-Quran, Translation, Tafseer, Arabic Language, Islamic Studies and special programs for children.",
+    q: "Which courses are available?",
+    a: "We offer Noorani Qaida, Quran Reading, Tajweed, Hifz-ul-Quran, Translation, Tafseer, Arabic Language, Islamic Studies and special programs for children.",
   },
   {
-    question: "Can students choose flexible class timings?",
-    answer:
-      "Yes. We provide flexible morning, evening and weekend timings according to the student's country and time zone.",
+    q: "Can students choose flexible class timings?",
+    a: "Yes. We provide flexible morning, evening and weekend timings according to the student's country and time zone.",
   },
   {
-    question: "Are classes available for adults?",
-    answer:
-      "Yes. Our courses are available for children, adults, beginners and advanced learners.",
+    q: "Are classes available for adults?",
+    a: "Yes. Our courses are available for children, adults, beginners and advanced learners.",
   },
 ];
 
 export default function FAQ() {
+  const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
+  const toggleFAQ = useCallback((index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  }, []);
+
+  const faqItems = useMemo(() => defaultFaqs, []);
+
   return (
-    <section id="faq" className="bg-white py-12 sm:py-16">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="font-extrabold uppercase tracking-[0.25em] text-amber-600 text-xs sm:text-sm">
-            Frequently Asked Questions
-          </p>
-
-          <h2 className="mt-2 text-3xl font-black text-emerald-950 sm:text-4xl lg:text-5xl">
-            Everything You Need to Know{" "}
-            <span className="block text-amber-600">
-              Before Starting Classes
-            </span>
+    <section className="py-12 sm:py-16 bg-white overflow-hidden" id="faq">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-10 sm:mb-12"
+        >
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-4 py-1.5 text-xs font-extrabold uppercase tracking-widest text-emerald-800 border border-emerald-200">
+            <HelpCircle size={14} className="text-emerald-700" aria-hidden="true" />
+            {t("faq.title")}
+          </span>
+          <h2 className="text-3xl font-black text-emerald-950 sm:text-4xl lg:text-5xl mt-2 tracking-tight">
+            {t("faq.heading")}
           </h2>
-
-          <p className="mt-4 text-base leading-relaxed text-gray-600 sm:text-lg">
-            Find answers to the most common questions about our online Quran
-            classes, teachers, courses and admission process.
+          <p className="mt-3 text-sm leading-relaxed text-gray-600 sm:text-base">
+            {t("faq.description")}
           </p>
-        </div>
+        </motion.div>
 
-        <div className="mt-8 space-y-3">
-          {faqs.map((faq, index) => {
-            const isOpen = openIndex === index;
+        <div className="space-y-3.5">
+          {faqItems.map((faq: { q: string; a: string }, idx: number) => {
+            const isOpen = openIndex === idx;
 
             return (
-              <div
-                key={faq.question}
-                className="overflow-hidden rounded-2xl border border-emerald-100/80 bg-[#fbf8f0] transition-colors"
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: idx * 0.05 }}
+                className={`rounded-2xl border transition-all duration-300 ${
+                  isOpen
+                    ? "border-emerald-500 bg-emerald-50/40 shadow-md"
+                    : "border-gray-200 bg-white hover:border-emerald-300 hover:bg-gray-50/50"
+                }`}
               >
                 <button
                   type="button"
-                  onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                  id={`faq-question-${idx}`}
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${idx}`}
+                  onClick={() => toggleFAQ(idx)}
+                  className="flex w-full items-center justify-between p-5 text-left font-bold text-emerald-950 sm:text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 rounded-2xl"
                 >
-                  <span className="text-base sm:text-lg font-bold text-emerald-950">
-                    {faq.question}
-                  </span>
-
-                  <ChevronDown
-                    size={20}
-                    className={`shrink-0 text-amber-600 transition duration-300 ${
-                      isOpen ? "rotate-180" : ""
+                  <span className="pr-4">{faq.q}</span>
+                  <div
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
+                      isOpen
+                        ? "bg-emerald-800 text-white rotate-180"
+                        : "bg-emerald-100 text-emerald-800"
                     }`}
-                  />
+                  >
+                    <ChevronDown size={18} aria-hidden="true" />
+                  </div>
                 </button>
 
-                {isOpen && (
-                  <div className="border-t border-emerald-100/80 px-5 py-4 bg-white/60">
-                    <p className="text-xs sm:text-sm leading-relaxed text-gray-600">{faq.answer}</p>
-                  </div>
-                )}
-              </div>
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      id={`faq-answer-${idx}`}
+                      role="region"
+                      aria-labelledby={`faq-question-${idx}`}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-5 pb-5 pt-1 text-sm leading-relaxed text-gray-600 sm:text-base border-t border-emerald-100/60 mt-1">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             );
           })}
         </div>
 
-        <div className="mt-8 rounded-3xl bg-emerald-950 px-6 py-8 text-center text-white sm:px-8 sm:py-10">
-          <h3 className="text-xl sm:text-2xl font-bold">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="relative mt-12 overflow-hidden rounded-3xl border border-amber-400/30 bg-gradient-to-r from-emerald-950 via-emerald-900 to-emerald-950 px-6 py-10 text-center text-white shadow-2xl backdrop-blur-xl sm:px-10 sm:py-12"
+        >
+          <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-amber-400/15 blur-3xl pointer-events-none" />
+
+          <h3 className="text-2xl font-black text-white sm:text-3xl">
             Still Have a Question?
           </h3>
 
-          <p className="mt-2 text-xs sm:text-sm text-emerald-100">
+          <p className="mt-2.5 text-xs sm:text-sm text-emerald-100/90 font-medium">
             Contact our admission team on WhatsApp for guidance.
           </p>
 
@@ -109,12 +146,13 @@ export default function FAQ() {
             href="https://wa.me/923301676985?text=Assalamualaikum%2C%20I%20have%20a%20question%20about%20your%20online%20Quran%20classes."
             target="_blank"
             rel="noreferrer"
-            className="mt-5 inline-flex rounded-xl bg-amber-400 px-7 py-3.5 font-bold text-emerald-950 transition hover:bg-amber-300 hover:scale-105"
+            className="group mt-6 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 px-8 py-3.5 font-black text-emerald-950 shadow-[0_10px_25px_-5px_rgba(251,191,36,0.4)] transition-all duration-300 hover:scale-105 hover:shadow-[0_15px_35px_-5px_rgba(251,191,36,0.6)]"
           >
-            Ask on WhatsApp
+            <span>Ask on WhatsApp</span>
+            <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
           </a>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
-}
+}
