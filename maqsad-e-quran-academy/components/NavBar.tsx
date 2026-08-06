@@ -25,13 +25,15 @@ export default function NavBar() {
   const { language, setLanguage, t } = useLanguage();
 
   const menuItems = [
-    { label: t("nav.home"), href: "#home" },
-    { label: t("nav.about"), href: "#about" },
-    { label: t("nav.courses"), href: "#courses" },
-    { label: t("nav.teachers"), href: "#teachers" },
-    { label: t("nav.admissions"), href: "#admissions" },
-    { label: t("nav.reviews"), href: "#reviews" },
-    { label: t("nav.contact"), href: "#contact" },
+    { label: t("nav.home") || "Home", href: "/#home" },
+    { label: t("nav.about") || "About", href: "/#about" },
+    { label: t("nav.courses") || "Courses", href: "/#courses" },
+    { label: "Tuition Fees", href: "/#pricing" },
+    { label: t("nav.teachers") || "Teachers", href: "/#teachers" },
+    { label: t("nav.admissions") || "Admissions", href: "/#admissions" },
+    { label: t("nav.reviews") || "Reviews", href: "/#reviews" },
+    { label: t("nav.contact") || "Contact", href: "/#contact" },
+    { label: "Blog", href: "/blog" },
   ];
 
   const currentLanguage =
@@ -44,10 +46,10 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-emerald-100 bg-white/95 shadow-md backdrop-blur-md">
-      <div className="mx-auto flex min-h-24 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <a href="#home" className="flex items-center gap-3">
-          <div className="relative h-16 w-20 shrink-0">
+    <nav className="sticky top-0 z-50 border-b border-emerald-900/10 bg-white/90 shadow-sm backdrop-blur-md transition-all duration-300">
+      <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between px-4 sm:px-6">
+        <a href="/#home" className="group flex items-center gap-3">
+          <div className="relative h-14 w-16 shrink-0 transition-transform duration-300 group-hover:scale-105 sm:h-16 sm:w-20">
             <Image
               src="/logo.png"
               alt="Maqsad-e-Quran Academy"
@@ -58,56 +60,64 @@ export default function NavBar() {
           </div>
 
           <div>
-            <h2 className="text-xl font-bold text-emerald-950 sm:text-2xl">
+            <h2 className="text-lg font-extrabold tracking-tight text-emerald-950 sm:text-2xl">
               Maqsad-e-Quran
             </h2>
 
-            <p className="text-xs font-semibold tracking-wide text-amber-600 sm:text-sm">
+            <p className="text-[11px] font-bold tracking-wider text-amber-600 uppercase sm:text-xs">
               Online Quran Academy
             </p>
           </div>
         </a>
 
-        <ul className="hidden items-center gap-6 font-semibold text-gray-700 xl:flex">
+        {/* Desktop Menu - visible on lg screens and up */}
+        <ul className="hidden items-center gap-5 font-semibold text-gray-700 lg:flex lg:gap-6">
           {menuItems.map((item) => (
             <li key={item.href}>
               <a
                 href={item.href}
-                className="transition hover:text-emerald-700"
+                className="relative py-2 text-sm font-semibold text-gray-700 transition-colors hover:text-emerald-800 focus:outline-none group"
               >
                 {item.label}
+                <span className="absolute bottom-0 left-0 h-0.5 w-0 rounded-full bg-emerald-600 transition-all duration-300 group-hover:w-full"></span>
               </a>
             </li>
           ))}
         </ul>
 
+        {/* Language selector & CTA button */}
         <div className="hidden items-center gap-3 lg:flex">
           <div className="relative">
             <button
               type="button"
               onClick={() => setLanguageOpen(!languageOpen)}
-              className="flex min-w-28 items-center justify-between gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 hover:border-emerald-600"
+              className="flex min-w-28 items-center justify-between gap-2 rounded-xl border border-emerald-200/80 bg-emerald-50/50 px-3.5 py-2 text-xs font-semibold text-emerald-900 transition hover:border-emerald-500 hover:bg-emerald-50"
             >
-              {currentLanguage}
+              <span className="flex items-center gap-1.5">
+                🌐 {currentLanguage}
+              </span>
 
               <ChevronDown
-                size={16}
-                className={`transition ${
+                size={14}
+                className={`transition-transform duration-200 ${
                   languageOpen ? "rotate-180" : ""
                 }`}
               />
             </button>
 
             {languageOpen && (
-              <div className="absolute right-0 top-12 z-50 w-44 overflow-hidden rounded-xl border border-gray-100 bg-white py-2 shadow-2xl">
+              <div className="absolute right-0 top-12 z-50 w-44 overflow-hidden rounded-2xl border border-emerald-100 bg-white py-2 shadow-2xl animate-in fade-in slide-in-from-top-2">
                 {languages.map((item) => (
                   <button
                     key={item.code}
                     type="button"
                     onClick={() => changeLanguage(item.code)}
-                    className="block w-full px-4 py-3 text-left text-sm font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-800"
+                    className="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm font-medium text-gray-700 transition hover:bg-emerald-50 hover:text-emerald-900"
                   >
-                    {item.label}
+                    <span>{item.label}</span>
+                    {language === item.code && (
+                      <span className="text-emerald-600 font-bold">✓</span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -115,59 +125,76 @@ export default function NavBar() {
           </div>
 
           <a
-            href="#admissions"
-            className="rounded-xl bg-emerald-800 px-5 py-3 font-bold text-white shadow-md transition hover:bg-emerald-950"
+            href="/login"
+            className="flex items-center gap-1.5 rounded-xl border border-emerald-800/20 bg-emerald-50 px-4 py-2.5 text-xs font-bold text-emerald-900 transition hover:border-emerald-700 hover:bg-emerald-100"
           >
-            {t("nav.trial")}
+            <span>🔐 Portal Login</span>
+          </a>
+
+          <a
+            href="#admissions"
+            className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-800 to-emerald-900 px-5 py-2.5 text-sm font-bold text-white shadow-md transition-all duration-300 hover:from-emerald-700 hover:to-emerald-900 hover:shadow-lg hover:shadow-emerald-900/20"
+          >
+            <span className="relative z-10 flex items-center gap-1.5">
+              <span>{t("nav.trial")}</span>
+              <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+            </span>
           </a>
         </div>
 
+        {/* Mobile menu trigger */}
         <button
           type="button"
           aria-label="Toggle navigation"
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-50 text-emerald-900 lg:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-900 shadow-sm ring-1 ring-emerald-200/50 transition hover:bg-emerald-100 lg:hidden"
         >
-          {mobileOpen ? <X size={25} /> : <Menu size={25} />}
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
+      {/* Mobile menu drawer */}
       {mobileOpen && (
-        <div className="border-t border-emerald-100 bg-white px-5 py-6 shadow-xl lg:hidden">
-          <div className="flex flex-col gap-1">
+        <div className="border-t border-emerald-100 bg-white/98 px-5 py-6 shadow-2xl backdrop-blur-xl lg:hidden animate-in slide-in-from-top-2">
+          <div className="flex flex-col gap-1.5">
             {menuItems.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className="rounded-lg px-4 py-3 font-semibold text-gray-700 hover:bg-emerald-50 hover:text-emerald-800"
+                className="rounded-xl px-4 py-3 font-semibold text-gray-700 transition hover:bg-emerald-50 hover:text-emerald-800 active:bg-emerald-100"
               >
                 {item.label}
               </a>
             ))}
           </div>
 
-          <select
-            value={language}
-            onChange={(event) =>
-              setLanguage(event.target.value as LanguageCode)
-            }
-            className="mt-5 w-full rounded-lg border border-gray-200 bg-white px-4 py-3"
-          >
-            {languages.map((item) => (
-              <option key={item.code} value={item.code}>
-                {item.label}
-              </option>
-            ))}
-          </select>
+          <div className="mt-5 border-t border-gray-100 pt-4">
+            <label className="mb-2 block text-xs font-semibold text-gray-500 uppercase">
+              Language / زبان
+            </label>
+            <select
+              value={language}
+              onChange={(event) =>
+                setLanguage(event.target.value as LanguageCode)
+              }
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+            >
+              {languages.map((item) => (
+                <option key={item.code} value={item.code}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
 
-          <a
-            href="#admissions"
-            onClick={() => setMobileOpen(false)}
-            className="mt-5 block rounded-xl bg-emerald-800 px-5 py-3 text-center font-bold text-white"
-          >
-            {t("nav.trial")}
-          </a>
+            <a
+              href="#admissions"
+              onClick={() => setMobileOpen(false)}
+              className="mt-4 block w-full rounded-xl bg-gradient-to-r from-emerald-800 to-emerald-950 px-5 py-3.5 text-center font-bold text-white shadow-md transition hover:from-emerald-700 hover:to-emerald-900"
+            >
+              {t("nav.trial")}
+            </a>
+          </div>
         </div>
       )}
     </nav>

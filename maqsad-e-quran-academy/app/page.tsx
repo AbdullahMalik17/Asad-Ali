@@ -1,5 +1,7 @@
 import About from "@/components/About";
 import AcademyHighlights from "@/components/AcademyHighlights";
+import AudioPreview from "@/components/AudioPreview";
+import Chatbot from "@/components/Chatbot";
 import Contact from "@/components/Contact";
 import Countries from "@/components/Countries";
 import Courses from "@/components/Courses";
@@ -8,6 +10,7 @@ import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import LearningProcess from "@/components/LearningProcess";
 import NavBar from "@/components/NavBar";
+import PricingCalculator from "@/components/PricingCalculator";
 import Programs from "@/components/Programs";
 import Reviews from "@/components/Reviews";
 import Teachers from "@/components/Teachers";
@@ -28,12 +31,14 @@ export default function Home() {
 
         <About />
         <AcademyHighlights />
+        <AudioPreview />
         <Programs />
 
         <div id="courses">
           <Courses />
         </div>
 
+        <PricingCalculator />
         <WhyChoose />
         <LearningProcess />
         <Teachers />
@@ -44,7 +49,9 @@ export default function Home() {
       </main>
 
       <WhatsApp />
+      <Chatbot />
       <Footer />
     </>
   );
 }
+

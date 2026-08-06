@@ -33,39 +33,38 @@ const features = [
 
 export default function WhyChoose() {
   return (
-    <section className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-12 sm:py-16 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
 
-          <p className="text-emerald-700 font-bold uppercase tracking-widest">
+          <p className="text-emerald-700 font-extrabold uppercase tracking-widest text-xs sm:text-sm">
             Why Choose Us
           </p>
 
-          <h2 className="text-5xl font-bold mt-4 text-gray-900">
-            Why Students Love
-            <br />
-            Maqsad-e-Quran Academy
+          <h2 className="text-3xl font-black mt-2 text-gray-950 sm:text-4xl lg:text-5xl">
+            Why Students Love{" "}
+            <span className="text-amber-600">Maqsad-e-Quran Academy</span>
           </h2>
 
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
 
           {features.map((item) => (
             <div
               key={item.title}
-              className="rounded-2xl border p-8 hover:shadow-xl hover:-translate-y-2 transition"
+              className="rounded-3xl border border-gray-100 bg-gray-50/50 p-6 hover:shadow-xl hover:-translate-y-1 hover:bg-white hover:border-emerald-200 transition duration-300"
             >
-              <div className="text-5xl mb-5">
+              <div className="text-4xl mb-4">
                 {item.icon}
               </div>
 
-              <h3 className="text-2xl font-bold text-emerald-800">
+              <h3 className="text-xl font-bold text-emerald-950">
                 {item.title}
               </h3>
 
-              <p className="mt-4 text-gray-600 leading-7">
+              <p className="mt-2 text-sm leading-relaxed text-gray-600">
                 {item.description}
               </p>
             </div>

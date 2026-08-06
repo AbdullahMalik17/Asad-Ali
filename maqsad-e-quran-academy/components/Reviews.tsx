@@ -23,66 +23,74 @@ const reviews = [
 
 export default function Reviews() {
   return (
-    <section id="reviews" className="bg-white py-24">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="reviews" className="bg-white py-12 sm:py-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="font-bold uppercase tracking-[0.28em] text-amber-600">
+          <p className="font-extrabold uppercase tracking-[0.25em] text-amber-600 text-xs sm:text-sm">
             Parents Reviews
           </p>
 
-          <h2 className="mt-4 text-4xl font-bold text-emerald-950 sm:text-5xl">
-            What Families Say About
+          <h2 className="mt-2 text-3xl font-black text-emerald-950 sm:text-4xl lg:text-5xl">
+            What Families Say About{" "}
             <span className="block text-amber-600">
               Maqsad-e-Quran Academy
             </span>
           </h2>
 
-          <p className="mt-6 text-lg leading-8 text-gray-600">
+          <p className="mt-4 text-base leading-relaxed text-gray-600 sm:text-lg">
             Families from different countries trust our teachers for
             structured, friendly and authentic online Quran education.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {reviews.map((item) => (
             <article
               key={item.name}
-              className="relative rounded-3xl border border-emerald-100 bg-[#fbf8f0] p-8 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl"
+              className="relative rounded-3xl border border-emerald-100 bg-[#fbf8f0] p-6 shadow-sm transition duration-300 hover:-translate-y-1.5 hover:shadow-xl flex flex-col justify-between"
             >
-              <Quote
-                size={42}
-                className="absolute right-7 top-7 text-amber-300"
-              />
+              <div>
+                <Quote
+                  size={36}
+                  className="absolute right-6 top-6 text-amber-300/80"
+                />
 
-              <div className="flex gap-1 text-amber-500">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <Star key={index} size={20} fill="currentColor" />
-                ))}
+                <div className="flex gap-1 text-amber-500">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Star key={index} size={18} fill="currentColor" />
+                  ))}
+                </div>
+
+                <p className="mt-5 text-sm sm:text-base leading-relaxed text-gray-700">
+                  “{item.review}”
+                </p>
               </div>
 
-              <p className="mt-7 leading-8 text-gray-700">
-                “{item.review}”
-              </p>
+              <div className="mt-6 border-t border-emerald-100/80 pt-4 flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-emerald-950">
+                    {item.name}
+                  </h3>
 
-              <div className="mt-8 border-t border-emerald-100 pt-6">
-                <h3 className="text-lg font-bold text-emerald-950">
-                  {item.name}
-                </h3>
+                  <p className="text-xs font-semibold text-amber-600">
+                    {item.country}
+                  </p>
+                </div>
 
-                <p className="mt-1 text-sm font-medium text-amber-600">
-                  {item.country}
-                </p>
+                <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-bold text-emerald-800">
+                  Verified Student
+                </span>
               </div>
             </article>
           ))}
         </div>
 
-        <div className="mt-12 text-center">
+        <div className="mt-8 text-center">
           <a
             href="https://wa.me/923301676985?text=Assalamualaikum%2C%20I%20want%20to%20book%20a%20free%20trial%20Quran%20class."
             target="_blank"
             rel="noreferrer"
-            className="inline-flex rounded-xl bg-emerald-800 px-8 py-4 font-bold text-white shadow-lg transition hover:bg-emerald-950"
+            className="inline-flex rounded-xl bg-emerald-800 px-7 py-3.5 font-bold text-white shadow-md transition hover:bg-emerald-950 hover:scale-105"
           >
             Join Our Global Quran Community
           </a>

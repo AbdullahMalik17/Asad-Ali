@@ -40,46 +40,46 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="bg-white py-24">
-      <div className="mx-auto max-w-5xl px-6">
+    <section id="faq" className="bg-white py-12 sm:py-16">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="font-bold uppercase tracking-[0.28em] text-amber-600">
+          <p className="font-extrabold uppercase tracking-[0.25em] text-amber-600 text-xs sm:text-sm">
             Frequently Asked Questions
           </p>
 
-          <h2 className="mt-4 text-4xl font-bold text-emerald-950 sm:text-5xl">
-            Everything You Need to Know
+          <h2 className="mt-2 text-3xl font-black text-emerald-950 sm:text-4xl lg:text-5xl">
+            Everything You Need to Know{" "}
             <span className="block text-amber-600">
               Before Starting Classes
             </span>
           </h2>
 
-          <p className="mt-6 text-lg leading-8 text-gray-600">
+          <p className="mt-4 text-base leading-relaxed text-gray-600 sm:text-lg">
             Find answers to the most common questions about our online Quran
             classes, teachers, courses and admission process.
           </p>
         </div>
 
-        <div className="mt-14 space-y-4">
+        <div className="mt-8 space-y-3">
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
 
             return (
               <div
                 key={faq.question}
-                className="overflow-hidden rounded-2xl border border-emerald-100 bg-[#fbf8f0]"
+                className="overflow-hidden rounded-2xl border border-emerald-100/80 bg-[#fbf8f0] transition-colors"
               >
                 <button
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="flex w-full items-center justify-between gap-5 px-6 py-5 text-left"
+                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
                 >
-                  <span className="text-lg font-bold text-emerald-950">
+                  <span className="text-base sm:text-lg font-bold text-emerald-950">
                     {faq.question}
                   </span>
 
                   <ChevronDown
-                    size={22}
+                    size={20}
                     className={`shrink-0 text-amber-600 transition duration-300 ${
                       isOpen ? "rotate-180" : ""
                     }`}
@@ -87,8 +87,8 @@ export default function FAQ() {
                 </button>
 
                 {isOpen && (
-                  <div className="border-t border-emerald-100 px-6 py-5">
-                    <p className="leading-8 text-gray-600">{faq.answer}</p>
+                  <div className="border-t border-emerald-100/80 px-5 py-4 bg-white/60">
+                    <p className="text-xs sm:text-sm leading-relaxed text-gray-600">{faq.answer}</p>
                   </div>
                 )}
               </div>
@@ -96,12 +96,12 @@ export default function FAQ() {
           })}
         </div>
 
-        <div className="mt-12 rounded-3xl bg-emerald-950 px-8 py-10 text-center text-white">
-          <h3 className="text-2xl font-bold">
+        <div className="mt-8 rounded-3xl bg-emerald-950 px-6 py-8 text-center text-white sm:px-8 sm:py-10">
+          <h3 className="text-xl sm:text-2xl font-bold">
             Still Have a Question?
           </h3>
 
-          <p className="mt-3 text-emerald-100">
+          <p className="mt-2 text-xs sm:text-sm text-emerald-100">
             Contact our admission team on WhatsApp for guidance.
           </p>
 
@@ -109,7 +109,7 @@ export default function FAQ() {
             href="https://wa.me/923301676985?text=Assalamualaikum%2C%20I%20have%20a%20question%20about%20your%20online%20Quran%20classes."
             target="_blank"
             rel="noreferrer"
-            className="mt-7 inline-flex rounded-xl bg-amber-400 px-8 py-4 font-bold text-emerald-950 transition hover:bg-amber-300"
+            className="mt-5 inline-flex rounded-xl bg-amber-400 px-7 py-3.5 font-bold text-emerald-950 transition hover:bg-amber-300 hover:scale-105"
           >
             Ask on WhatsApp
           </a>
