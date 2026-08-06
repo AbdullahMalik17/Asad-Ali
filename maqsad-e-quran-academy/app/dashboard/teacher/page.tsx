@@ -540,6 +540,7 @@ export default function TeacherDashboardPage() {
                 ) : null}
               </div>
             ))}
+          </div>
         </div>
       )}
 
