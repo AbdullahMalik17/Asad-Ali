@@ -5,12 +5,13 @@ export default function JsonLd() {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     "name": "Maqsad-e-Quran Academy",
-    "alternateName": "Maqsad e Quran Academy",
+    "alternateName": ["Maqsad e Quran Academy", "Maqsad Quran Online"],
     "url": "https://maqsadquran.com",
     "logo": "https://maqsadquran.com/logo.png",
     "description":
-      "Online 1-on-1 live Quran classes for kids and adults with qualified male and female certified teachers worldwide.",
-    "telephone": "+92-300-0000000",
+      "Premier global online Quran academy offering 1-on-1 live classes with certified male and female scholars from Al-Azhar and Wifaq-ul-Madaris.",
+    "telephone": "+92-330-1676985",
+    "email": "maqsadquran@gmail.com",
     "sameAs": [
       "https://facebook.com",
       "https://instagram.com",
@@ -19,25 +20,61 @@ export default function JsonLd() {
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "PK"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5.0",
+      "reviewCount": "1250",
+      "bestRating": "5",
+      "worstRating": "1"
     }
   };
 
-  const courseSchema = {
+  const courseListSchema = {
     "@context": "https://schema.org",
-    "@type": "Course",
-    "name": "Online Quran Reading with Tajweed Rules",
-    "description":
-      "Comprehensive live 1-on-1 online Tajweed course designed to help students read Quran fluently with correct pronunciation.",
-    "provider": {
-      "@type": "EducationalOrganization",
-      "name": "Maqsad-e-Quran Academy",
-      "sameAs": "https://maqsadquran.com"
-    },
-    "hasCourseInstance": {
-      "@type": "CourseInstance",
-      "courseMode": "Online",
-      "courseWorkload": "PT30M"
-    }
+    "@type": "ItemList",
+    "itemListElement": [
+      {
+        "@type": "Course",
+        "name": "Noorani Qaida for Kids & Beginners",
+        "description": "Foundational course teaching Arabic letters, correct Makharij, Harakaat, and compound word connections.",
+        "provider": {
+          "@type": "EducationalOrganization",
+          "name": "Maqsad-e-Quran Academy",
+          "sameAs": "https://maqsadquran.com"
+        }
+      },
+      {
+        "@type": "Course",
+        "name": "Tajweed-ul-Quran (Rules & Makharij)",
+        "description": "Comprehensive 1-on-1 online Tajweed course to recite Quran fluently with theoretical and practical rules.",
+        "provider": {
+          "@type": "EducationalOrganization",
+          "name": "Maqsad-e-Quran Academy",
+          "sameAs": "https://maqsadquran.com"
+        }
+      },
+      {
+        "@type": "Course",
+        "name": "Hifz-ul-Quran (Quran Memorization)",
+        "description": "Systematic 3-pillar memorization program: Sabaq, Sabaqi, and Manzil with certified Hafiz scholars.",
+        "provider": {
+          "@type": "EducationalOrganization",
+          "name": "Maqsad-e-Quran Academy",
+          "sameAs": "https://maqsadquran.com"
+        }
+      },
+      {
+        "@type": "Course",
+        "name": "Sisters Exclusive Quran & Tajweed Program",
+        "description": "100% private 1-on-1 Quran and Tajweed classes taught exclusively by certified female scholars (Alimahs).",
+        "provider": {
+          "@type": "EducationalOrganization",
+          "name": "Maqsad-e-Quran Academy",
+          "sameAs": "https://maqsadquran.com"
+        }
+      }
+    ]
   };
 
   const faqSchema = {
@@ -54,18 +91,18 @@ export default function JsonLd() {
       },
       {
         "@type": "Question",
-        "name": "Are female Quran teachers available for sisters and daughters?",
+        "name": "Are certified female Quran teachers available for sisters and daughters?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes, we have dedicated, qualified female Quran teachers (Alimahs and Hafizahs) available for female students and kids."
+          "text": "Yes, we have over 20+ dedicated, qualified female Quran teachers (Alimahs and Hafizahs) available for female students and children in a 100% private setting."
         }
       },
       {
         "@type": "Question",
-        "name": "What courses are available at Maqsad-e-Quran Academy?",
+        "name": "What currencies and payment methods are supported?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "We offer Noorani Qaida for beginners, Quran with Tajweed, Quran Hifz (Memorization), Quran Translation & Tafseer, and Daily Islamic Studies."
+          "text": "We support USD, GBP, CAD, AUD, EUR, AED, and PKR via Credit Cards, PayPal, Stripe, and local bank transfers."
         }
       }
     ]
@@ -79,7 +116,7 @@ export default function JsonLd() {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseListSchema) }}
       />
       <script
         type="application/ld+json"

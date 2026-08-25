@@ -1,24 +1,23 @@
 "use client";
 
-import About from "@/components/About";
-import AcademyHighlights from "@/components/AcademyHighlights";
-import AudioPreview from "@/components/AudioPreview";
-import Chatbot from "@/components/Chatbot";
-import Contact from "@/components/Contact";
-import Countries from "@/components/Countries";
-import Courses from "@/components/Courses";
-import FAQ from "@/components/FAQ";
-import Footer from "@/components/Footer";
-import Hero from "@/components/Hero";
-import LearningProcess from "@/components/LearningProcess";
-import NavBar from "@/components/NavBar";
-import PricingCalculator from "@/components/PricingCalculator";
-import Programs from "@/components/Programs";
-import Reviews from "@/components/Reviews";
-import Teachers from "@/components/Teachers";
 import TopBar from "@/components/TopBar";
-import WhatsApp from "@/components/WhatsApp";
+import NavBar from "@/components/NavBar";
+import HeroSection from "@/components/HeroSection";
+import AudioRecitationPreview from "@/components/AudioRecitationPreview";
+import ProgramsBento from "@/components/ProgramsBento";
+import PricingCalculator from "@/components/PricingCalculator";
+import TutorsShowcase from "@/components/TutorsShowcase";
+import AdmissionsRoadmap from "@/components/AdmissionsRoadmap";
 import WhyChoose from "@/components/WhyChoose";
+import ReviewsMarquee from "@/components/ReviewsMarquee";
+import AcademyHighlights from "@/components/AcademyHighlights";
+import About from "@/components/About";
+import Countries from "@/components/Countries";
+import FAQ from "@/components/FAQ";
+import Contact from "@/components/Contact";
+import WhatsApp from "@/components/WhatsApp";
+import Chatbot from "@/components/Chatbot";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -26,34 +25,57 @@ export default function Home() {
       <TopBar />
       <NavBar />
 
-      <main>
-        <div id="home">
-          <Hero />
-        </div>
+      <main className="min-h-screen bg-[#fbf9f4] text-slate-900 overflow-x-hidden">
+        {/* Hero Section with Lead Capture Form */}
+        <HeroSection />
 
-        <About />
-        <AcademyHighlights />
-        <AudioPreview />
-        <Programs />
+        {/* Interactive Recitation Audio Player & Tajweed Standards */}
+        <AudioRecitationPreview />
 
-        <div id="courses">
-          <Courses />
-        </div>
+        {/* 21st Tabbed Bento Grid Programs */}
+        <ProgramsBento />
 
+        {/* Dynamic Multi-Currency Tuition Calculator */}
         <PricingCalculator />
-        <WhyChoose />
-        <LearningProcess />
-        <Teachers />
-        <Reviews />
+
+        {/* Verified Scholars & Alimahs Faculty Showcase */}
+        <TutorsShowcase />
+
+        {/* 4-Step Admissions Roadmap */}
+        <AdmissionsRoadmap />
+
+        {/* Institutional Pillars & Why Choose */}
+        <div id="why-choose">
+          <WhyChoose />
+        </div>
+
+        {/* Global Parent Testimonials Infinite Marquee */}
+        <ReviewsMarquee />
+
+        {/* Heritage, About & Highlights */}
+        <div id="about">
+          <About />
+          <AcademyHighlights />
+        </div>
+
+        {/* Global Reach across 35+ Countries */}
         <Countries />
+
+        {/* Frequently Asked Questions */}
         <FAQ />
-        <Contact />
+
+        {/* Direct Contact & Support */}
+        <div id="contact">
+          <Contact />
+        </div>
       </main>
 
+      {/* Floating Interactive Elements */}
       <WhatsApp />
       <Chatbot />
+
+      {/* Royal Emerald & Sacred Gold Footer */}
       <Footer />
     </>
   );
 }
-

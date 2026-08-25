@@ -1,25 +1,136 @@
 @import "tailwindcss";
 
-:root {
-  --background: #fcfbf8;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #fbf9f4;
+    --foreground: #0f172a;
+
+    /* Sacred Emerald Palette */
+    --emerald-deep: #022c22;
+    --emerald-rich: #064e3b;
+    --emerald-primary: #065f46;
+    --emerald-accent: #047857;
+
+    /* Sacred Gold Palette */
+    --gold-deep: #b45309;
+    --gold-primary: #d97706;
+    --gold-light: #f59e0b;
+    --gold-gilded: #fbbf24;
+    --gold-surface: #fef3c7;
+
+    /* Alabaster & Pearl */
+    --pearl-white: #ffffff;
+    --alabaster-warm: #fbf9f4;
+    --alabaster-soft: #f4efe4;
+  }
+
+  body {
+    background-color: var(--alabaster-warm);
+    color: var(--foreground);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  background-image: radial-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 1px);
+/* Islamic Geometric 8-Point Star Mesh Background Pattern */
+.bg-islamic-pattern {
+  background-color: #022c22;
+  background-image: radial-gradient(rgba(245, 158, 11, 0.12) 1.5px, transparent 1.5px),
+                    radial-gradient(rgba(16, 185, 129, 0.08) 1.5px, transparent 1.5px);
   background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+}
+
+.bg-islamic-pattern-light {
+  background-color: #fbf9f4;
+  background-image: radial-gradient(rgba(6, 78, 59, 0.07) 1.5px, transparent 1.5px),
+                    radial-gradient(rgba(217, 119, 6, 0.07) 1.5px, transparent 1.5px);
+  background-size: 36px 36px;
+  background-position: 0 0, 18px 18px;
+}
+
+/* Illuminated Gold Glow Utilities */
+.shadow-gold-glow {
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+}
+
+.shadow-emerald-glow {
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+}
+
+.shadow-royal-elevation {
+  box-shadow: 0 20px 40px -15px rgba(2, 44, 34, 0.15), 0 0 1px 1px rgba(217, 119, 6, 0.1);
+}
+
+/* Shimmer Border Animation */
+@keyframes shimmer-sweep {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(251, 191, 36, 0.4) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer-sweep 3.5s infinite;
+}
+
+/* Infinite Marquee Animations */
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-marquee-left {
+  display: flex;
+  width: max-content;
+  animation: marquee-left 40s linear infinite;
+}
+
+.animate-marquee-left:hover {
+  animation-play-state: paused;
+}
+
+.animate-marquee-right {
+  display: flex;
+  width: max-content;
+  animation: marquee-right 40s linear infinite;
+}
+
+.animate-marquee-right:hover {
+  animation-play-state: paused;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #022c22;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #065f46;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
 }
